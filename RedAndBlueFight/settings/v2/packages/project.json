@@ -1,0 +1,54 @@
+{
+  "general": {
+    "designResolution": {
+      "width": 1080,
+      "height": 1920
+    }
+  },
+  "layer": [
+    {
+      "name": "红",
+      "value": 1
+    },
+    {
+      "name": "蓝",
+      "value": 2
+    }
+  ],
+  "physics": {
+    "collisionMatrix": {
+      "0": 0,
+      "1": 30,
+      "2": 30,
+      "3": 6,
+      "4": 6
+    },
+    "collisionGroups": [
+      {
+        "index": 1,
+        "name": "RED"
+      },
+      {
+        "index": 2,
+        "name": "BLUE"
+      },
+      {
+        "index": 3,
+        "name": "WALL"
+      },
+      {
+        "index": 4,
+        "name": "GROUND"
+      }
+    ],
+    "defaultMaterial": "d66ea836-5da0-4c2e-9c9f-6e58e69a1c47",
+    "autoSimulation": true,
+    "allowSleep": false
+  },
+  "__version__": "1.0.4",
+  "fbx": {
+    "legacyFbxImporter": {
+      "visible": true
+    }
+  }
+}

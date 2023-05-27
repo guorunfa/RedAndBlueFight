@@ -1,0 +1,259 @@
+{
+  "ver": "2.3.2",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0",
+  "files": [],
+  "subMetas": {
+    "33532": {
+      "importer": "gltf-mesh",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@33532",
+      "displayName": "",
+      "id": "33532",
+      "name": "Cylinder.007.mesh",
+      "userData": {
+        "gltfIndex": 4
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "361e5": {
+      "importer": "gltf-mesh",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@361e5",
+      "displayName": "",
+      "id": "361e5",
+      "name": "Cube.292.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "10dfa": {
+      "importer": "gltf-mesh",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@10dfa",
+      "displayName": "",
+      "id": "10dfa",
+      "name": "Cylinder.005.mesh",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "db9ab": {
+      "importer": "gltf-mesh",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@db9ab",
+      "displayName": "",
+      "id": "db9ab",
+      "name": "Cylinder.008.mesh",
+      "userData": {
+        "gltfIndex": 2
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "ec929": {
+      "importer": "gltf-mesh",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@ec929",
+      "displayName": "",
+      "id": "ec929",
+      "name": "Cylinder.099.mesh",
+      "userData": {
+        "gltfIndex": 3
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "5e49e": {
+      "importer": "gltf-embeded-image",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@5e49e",
+      "displayName": "",
+      "id": "5e49e",
+      "name": "base_color_texture-0.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "ef396": {
+      "importer": "gltf-embeded-image",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@ef396",
+      "displayName": "",
+      "id": "ef396",
+      "name": "base_color_texture-1.image",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "0a1ef": {
+      "importer": "texture",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@0a1ef",
+      "displayName": "",
+      "id": "0a1ef",
+      "name": "base_color_texture-0.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "abae1844-129c-40ae-9160-3fbe34c9d6f0@5e49e"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "05da8": {
+      "importer": "texture",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@05da8",
+      "displayName": "",
+      "id": "05da8",
+      "name": "base_color_texture-1.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "abae1844-129c-40ae-9160-3fbe34c9d6f0@ef396"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "00a31": {
+      "importer": "gltf-material",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@00a31",
+      "displayName": "",
+      "id": "00a31",
+      "name": "helico.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b4e6b": {
+      "importer": "gltf-material",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@b4e6b",
+      "displayName": "",
+      "id": "b4e6b",
+      "name": "Material.material",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "cc804": {
+      "importer": "gltf-scene",
+      "uuid": "abae1844-129c-40ae-9160-3fbe34c9d6f0@cc804",
+      "displayName": "",
+      "id": "cc804",
+      "name": "truk1.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "abae1844-129c-40ae-9160-3fbe34c9d6f0@5e49e"
+      },
+      {
+        "name": "base_color_texture",
+        "uri": "abae1844-129c-40ae-9160-3fbe34c9d6f0@ef396"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "abae1844-129c-40ae-9160-3fbe34c9d6f0@cc804",
+    "assetFinder": {
+      "meshes": [
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@361e5",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@10dfa",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@db9ab",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@ec929",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@33532"
+      ],
+      "skeletons": [],
+      "textures": [
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@0a1ef",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@05da8"
+      ],
+      "materials": [
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@00a31",
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@b4e6b"
+      ],
+      "scenes": [
+        "abae1844-129c-40ae-9160-3fbe34c9d6f0@cc804"
+      ]
+    }
+  }
+}
