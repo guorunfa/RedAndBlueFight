@@ -87,6 +87,7 @@ export class GameManager extends Component {
         this.uiManager.changeUIState(GameState.INIT);
         UIManager.rankList = [];
         this.inputBoxManager.inputBoxInit();
+        console.log("游戏初始化完成-------------------------------");
     }
 
     getBornPos(team: TEAM) {
@@ -108,20 +109,22 @@ export class GameManager extends Component {
         switch (command[1]) {
             case "1"://召唤一组枪兵-red*5
                 for (let i = 0; i < 5; i++) {
-                    let myBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 3);
-                    let gun = new PeopleGun(team, this.redParent, myBornPos, this.blueTeam.base);
+                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
+                    let gun = new PeopleGun(team, this.redParent, gunBornPos, this.blueTeam.base);
                     this.redTeam.guns.push(gun);
                 }
                 break;
             case "2"://召唤一组rpg兵-red*3
                 for (let i = 0; i < 3; i++) {
-                    let rpg = new PeopleRpg(TEAM.RED, this.redParent, bornPos, this.blueTeam.base);
+                    let rpgBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
+                    let rpg = new PeopleRpg(team, this.redParent, rpgBornPos, this.blueTeam.base);
                     this.redTeam.rpgs.push(rpg);
                 }
                 break;
             case "3"://召唤一组飞行兵-red*3
                 for (let i = 0; i < 3; i++) {
-                    let fly = new PeopleFly(TEAM.RED, this.redParent, bornPos, this.blueTeam.base);
+                    let flyBornPos = new Vec3(bornPos.x, 20, bornPos.z + -6 + i * 10);
+                    let fly = new PeopleFly(team, this.redParent, flyBornPos, this.blueTeam.base);
                     this.redTeam.flys.push(fly);
                 }
                 break;

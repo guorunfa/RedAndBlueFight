@@ -2,7 +2,7 @@
   "ver": "1.0.25",
   "importer": "image",
   "imported": true,
-  "uuid": "8fceb4b8-3745-46c6-aec9-52cab0309bf5",
+  "uuid": "453488c5-e3e1-4fb1-8361-72fb54bbd26e",
   "files": [
     ".json",
     ".png"
@@ -10,7 +10,7 @@
   "subMetas": {
     "6c48a": {
       "importer": "texture",
-      "uuid": "8fceb4b8-3745-46c6-aec9-52cab0309bf5@6c48a",
+      "uuid": "453488c5-e3e1-4fb1-8361-72fb54bbd26e@6c48a",
       "displayName": "people_blue",
       "id": "6c48a",
       "name": "texture",
@@ -22,7 +22,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": true,
-        "imageUuidOrDatabaseUri": "8fceb4b8-3745-46c6-aec9-52cab0309bf5",
+        "imageUuidOrDatabaseUri": "453488c5-e3e1-4fb1-8361-72fb54bbd26e",
         "visible": true
       },
       "ver": "1.0.22",
@@ -34,9 +34,9 @@
     }
   },
   "userData": {
-    "hasAlpha": true,
     "type": "texture",
-    "redirect": "8fceb4b8-3745-46c6-aec9-52cab0309bf5@6c48a",
-    "fixAlphaTransparencyArtifacts": false
+    "fixAlphaTransparencyArtifacts": true,
+    "hasAlpha": true,
+    "redirect": "453488c5-e3e1-4fb1-8361-72fb54bbd26e@6c48a"
   }
 }

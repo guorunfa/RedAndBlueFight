@@ -18,6 +18,7 @@ export class InputManager extends Component {
     }
 
     inputBoxInit() {
+        console.log("输入初始化完成-------------------------------");
         this.canGetCommand = false;
         this.editBox.string = "";
     }

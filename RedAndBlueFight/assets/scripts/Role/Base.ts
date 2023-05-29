@@ -2,7 +2,7 @@ import { _decorator, Component, Node, CCObject, game } from 'cc';
 import { TEAM } from '../Manager/GameManager';
 
 
-export const BaseMaxHp: number = 100;
+export const BaseMaxHp: number = 10000;
 export const BaseShieldTime: number = 25;
 
 export class Base {
@@ -11,6 +11,7 @@ export class Base {
     role: Node;
     maxHp: number;
     hp: number;
+    isDie: boolean;
 
     shield: Node;
     shieldCountTime: number;
@@ -18,6 +19,7 @@ export class Base {
     constructor(team: TEAM, role: Node) {
         this.team = team;
         this.role = role;
+        this.role.on("hit", this.hit, this);
         this.maxHp = BaseMaxHp;
         this.hp = this.maxHp;
         this.setHp();
@@ -27,23 +29,27 @@ export class Base {
 
     }
 
-    hit(atk) {
-        if (this.shield.active) {
+    hit(atkValue: number) {
+        if (this.isDie) {
             return;
         }
-        if (this.hp - atk <= 0) {
+        console.log("受到攻击");
+        this.hp -= atkValue;
+
+        if (this.hp <= 0) {
             this.hp = 0;
-            this.baseDie(this.team);
+            console.log("死亡:", this.role.name);
+            this.baseDie();
         }
-        this.hp -= atk;
+        this.setHp();
     }
 
     setHp() {
         game.emit("setHp", this.team, this.hp);
     }
 
-    baseDie(whoWin: TEAM) {
-
+    baseDie() {
+        game.emit("over");
     }
 
 

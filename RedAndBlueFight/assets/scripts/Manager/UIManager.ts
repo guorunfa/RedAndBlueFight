@@ -66,7 +66,7 @@ export class UIManager extends Component {
             case GameState.COUNTING:
                 console.log("进入倒计时---------------------------------");
                 this.showUIPanel(this.counting);
-                this.timer = 1;
+                this.timer = 9;
                 this.schedule(this.countTime, 1);
                 break;
             case GameState.START:
@@ -91,7 +91,7 @@ export class UIManager extends Component {
     }
 
     onStartBtn() {
-        this.changeUIState(GameState.GAMING);
+        this.changeUIState(GameState.COUNTING);
     }
 
     showUIPanel(uiPanel: Node, rankList?) {
@@ -102,6 +102,7 @@ export class UIManager extends Component {
     //展示排行榜
     showRank() {
         if (UIManager.rankList.length == 0) {
+            this.rank.active = true;
             return;
         }
 
