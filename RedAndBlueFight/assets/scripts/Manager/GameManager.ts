@@ -109,7 +109,8 @@ export class GameManager extends Component {
         switch (command[1]) {
             case "1"://召唤一组枪兵-red*5
                 for (let i = 0; i < 5; i++) {
-                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
+                    let temp = Tools.getRandomNum(5, 10);
+                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
                     let gun = new PeopleGun(team, this.redParent, gunBornPos, this.blueTeam.base);
                     this.redTeam.guns.push(gun);
                 }

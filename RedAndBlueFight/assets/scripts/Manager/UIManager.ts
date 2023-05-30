@@ -66,7 +66,7 @@ export class UIManager extends Component {
             case GameState.COUNTING:
                 console.log("进入倒计时---------------------------------");
                 this.showUIPanel(this.counting);
-                this.timer = 9;
+                this.timer = 1;
                 this.schedule(this.countTime, 1);
                 break;
             case GameState.START:

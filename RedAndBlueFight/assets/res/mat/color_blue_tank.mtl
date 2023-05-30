@@ -11,7 +11,8 @@
   "_defines": [
     {
       "USE_INSTANCING": true,
-      "PBR_UV": "v_uv1"
+      "USE_ALBEDO_MAP": true,
+      "USE_EMISSIVE_MAP": true
     },
     {},
     {}
@@ -47,20 +48,17 @@
   ],
   "_props": [
     {
-      "mainColor": {
-        "__type__": "cc.Color",
-        "r": 125,
-        "g": 182,
-        "b": 55,
-        "a": 255
-      },
       "roughness": 1,
       "mainTexture": {
-        "__uuid__": "47ae220e-38d0-4e9b-aefe-ae7200d5194d@6c48a",
+        "__uuid__": "9c5d76e6-661b-4d10-9a4e-1d858818e4f8@6c48a",
         "__expectedType__": "cc.Texture2D"
       },
       "pbrMap": {
         "__uuid__": "47ae220e-38d0-4e9b-aefe-ae7200d5194d@6c48a",
+        "__expectedType__": "cc.Texture2D"
+      },
+      "emissiveMap": {
+        "__uuid__": "9c5d76e6-661b-4d10-9a4e-1d858818e4f8@6c48a",
         "__expectedType__": "cc.Texture2D"
       }
     },

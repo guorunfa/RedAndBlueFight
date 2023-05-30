@@ -12,8 +12,7 @@
     {
       "USE_INSTANCING": true,
       "USE_ALBEDO_MAP": true,
-      "PBR_UV": "v_uv1",
-      "USE_EMISSIVE_MAP": true
+      "PBR_UV": "v_uv1"
     },
     {},
     {}

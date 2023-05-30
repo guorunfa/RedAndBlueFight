@@ -49,13 +49,12 @@
     {
       "mainColor": {
         "__type__": "cc.Color",
-        "r": 92,
-        "g": 182,
-        "b": 226,
+        "r": 52,
+        "g": 108,
+        "b": 180,
         "a": 255
       },
-      "roughness": 0.11,
-      "metallic": 0,
+      "roughness": 0,
       "mainTexture": {
         "__uuid__": "47ae220e-38d0-4e9b-aefe-ae7200d5194d@6c48a",
         "__expectedType__": "cc.Texture2D"
