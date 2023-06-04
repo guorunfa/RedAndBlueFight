@@ -1,4 +1,5 @@
-import { Canvas, macro, size, view } from "cc";
+import { Canvas, macro, Mat4, size, Vec3, view, Node } from "cc";
+
 
 export default class Tools {
 
@@ -112,5 +113,14 @@ export default class Tools {
             countIndex++;
         }
         return group;
+    }
+
+    // 3D 节点 nodeB 本地坐标转换到 3D 节点 nodeA 本地坐标
+    static convertToNodePos(nodeA: Node, nodeB: Node) {
+        let tempPos = new Vec3();
+        let tempMat4 = new Mat4();
+        Mat4.invert(tempMat4, nodeA.getWorldMatrix());
+        Vec3.transformMat4(tempPos, nodeB.worldPosition, tempMat4);
+        return tempPos;
     }
 }

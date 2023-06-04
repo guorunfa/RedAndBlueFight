@@ -34,7 +34,6 @@ export class PeopleFly {
 
         this.role = people;
         this.role.on("hit", this.hit, this);
-        game.on("over", this.over, this);
         this.team = team;
         this.maxHp = PeopleFlyMaxHp;
         this.hp = this.maxHp;
@@ -123,11 +122,11 @@ export class PeopleFly {
         }
     }
 
-    over() {
-        if (this.isDie) {
-            return;
+    die() {
+        this.isDie = true;
+        if (this.role.isValid) {
+            this.role.destroy();
         }
-        this.rigbody.linearDamping = 1;
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

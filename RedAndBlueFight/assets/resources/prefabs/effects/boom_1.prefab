@@ -115,7 +115,7 @@
     "duration": 4,
     "loop": false,
     "simulationSpeed": 3,
-    "playOnAwake": true,
+    "playOnAwake": false,
     "gravityModifier": {
       "__id__": 14
     },
@@ -898,6 +898,7 @@
       "__id__": 0
     },
     "fileId": "b2zrbxHm9AgpB3KYtLOP2r",
+    "instance": null,
     "targetOverrides": null
   }
 ]

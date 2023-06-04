@@ -31,7 +31,12 @@ export class InputManager extends Component {
             return;
         }
         let command = editBox.string;
-        if (command.length != 2 || command == "" || (command[0] != "红" && command[0] != "蓝") || Number(command[1]) > 7) {
+        if (command == "66" || command == "88") {
+            game.emit("getCommand", command);
+            return;
+        }
+        let temp = command.split("+")[1];
+        if (Number(temp) < 0 || Number(temp) > 7) {
             console.log("输入错误");
             return;
         }

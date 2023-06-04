@@ -299,7 +299,7 @@
         "mipfilter": "none",
         "anisotropy": 0,
         "isUuid": false,
-        "imageUuidOrDatabaseUri": "db://assets/res/people/people_blue.png"
+        "imageUuidOrDatabaseUri": "db://assets/res/tex/people_blue.png"
       },
       "ver": "1.0.22",
       "imported": true,
@@ -345,7 +345,7 @@
     "imageMetas": [
       {
         "name": "base_color_texture",
-        "remap": "db://assets/res/people/people_blue.png",
+        "remap": "db://assets/res/tex/people_blue.png",
         "uri": "633a6b0d-92b4-4216-88fb-451117c64dd8@48b02"
       }
     ],

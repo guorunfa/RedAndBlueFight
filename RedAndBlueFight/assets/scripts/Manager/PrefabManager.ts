@@ -25,6 +25,11 @@ export class PrefabManager {
     public static prefab_effect_fire_blue: Prefab;
     public static prefab_effect_fire_red: Prefab;
 
+    public static prefab_rankItem: Prefab;
+    public static prefab_redTips: Prefab;
+    public static prefab_blueTips: Prefab;
+
+
     public static loadPrefabs() {
         resources.loadDir("prefabs/effects", Prefab, (err, assets: Prefab[]) => {
             this.prefab_effect_boom_1 = assets.find((prefab) => {
@@ -87,8 +92,20 @@ export class PrefabManager {
                     return prefab.name == "red_people_gun_0";
                 })
 
-                console.log("资源加载完成-------------------------------");
-                game.emit("prefabsLoaded");
+                resources.loadDir("prefabs/ui", Prefab, (err, assets: Prefab[]) => {
+                    this.prefab_rankItem = assets.find((prefab) => {
+                        return prefab.name == "RankItem";
+                    })
+                    this.prefab_redTips = assets.find((prefab) => {
+                        return prefab.name == "RedTips";
+                    })
+                    this.prefab_blueTips = assets.find((prefab) => {
+                        return prefab.name == "BlueTips";
+                    })
+
+                    console.log("资源加载完成-------------------------------");
+                    game.emit("prefabsLoaded");
+                })
             })
         })
     }

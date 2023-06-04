@@ -43,10 +43,19 @@
     "_components": [
       {
         "__id__": 154
+      },
+      {
+        "__id__": 156
+      },
+      {
+        "__id__": 158
+      },
+      {
+        "__id__": 160
       }
     ],
     "_prefab": {
-      "__id__": 156
+      "__id__": 162
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -4426,6 +4435,99 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "6668In+rhNE6JEB/ZwK2ib"
+  },
+  {
+    "__type__": "cc.CapsuleCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 157
+    },
+    "_material": {
+      "__uuid__": "e4250632-d016-4f03-9c72-2ab3c6a873e5",
+      "__expectedType__": "cc.PhysicsMaterial"
+    },
+    "_isTrigger": false,
+    "_center": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 3.1,
+      "z": 0.3
+    },
+    "_radius": 1.557,
+    "_cylinderHeight": 2.998,
+    "_direction": 1,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "44JC0aGp9NfoKism/uqR7F"
+  },
+  {
+    "__type__": "cc.RigidBody",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 159
+    },
+    "_group": 2,
+    "_type": 1,
+    "_mass": 1,
+    "_allowSleep": false,
+    "_linearDamping": 0,
+    "_angularDamping": 0,
+    "_useGravity": false,
+    "_linearFactor": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_angularFactor": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "bd3iGnIb5Lspr7qypajNRz"
+  },
+  {
+    "__type__": "cc.SphereCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 161
+    },
+    "_material": null,
+    "_isTrigger": true,
+    "_center": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_radius": 30,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "36FO+ZcDdGDqxFgev1OMSD"
   },
   {
     "__type__": "cc.PrefabInfo",

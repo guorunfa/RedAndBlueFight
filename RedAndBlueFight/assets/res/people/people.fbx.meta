@@ -661,6 +661,11 @@
       ]
     },
     "dumpMaterials": false,
-    "materialDumpDir": "db://assets/res/matPeople"
+    "materialDumpDir": "db://assets/res/matPeople",
+    "disableMeshSplit": true,
+    "allowMeshDataAccess": true,
+    "meshOptimizer": {
+      "enable": false
+    }
   }
 }

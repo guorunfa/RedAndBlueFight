@@ -1,6 +1,8 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game } from 'cc';
+import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
+import Tools from '../Tools';
 import { Base } from './Base';
 
 
@@ -8,7 +10,7 @@ const PeopleGunMaxHp: number = 100;
 const PeopleGunAtk: number = 40;
 const PeopleGunAtkInterval: number = 3;
 const PeopleGunAtkDistance: number = 30;
-const PeopleGunMoveSpeed: number = 20;
+const PeopleGunMoveSpeed: number = 30;
 
 export class PeopleGun {
 
@@ -35,7 +37,6 @@ export class PeopleGun {
 
         this.role = people;
         this.role.on("hit", this.hit, this);
-        game.on("over", this.over, this);
         this.team = team;
         this.maxHp = PeopleGunMaxHp;
         this.hp = this.maxHp;
@@ -53,7 +54,10 @@ export class PeopleGun {
         this.phyCollider.on("onCollisionExit", this.onCollisionExit, this);
         this.isAtking = false;
         this.isDie = false;
-        this.move();
+        let time = Tools.getRandomNum(0, 2);
+        setTimeout(() => {
+            this.move();
+        }, time * 100);
     }
 
     moveInterval;
@@ -113,16 +117,16 @@ export class PeopleGun {
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
-            if (!target.isValid) {
+            if (!target.isValid || this.isDie) {
                 this.isTriggerEnter = false;
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
+            console.log(this.role.position);
             target.emit("hit", this.atk)
         }, this.atkInterval * 1000, this);
-
     }
 
     hit(atkValue: number) {
@@ -141,11 +145,11 @@ export class PeopleGun {
         }
     }
 
-    over() {
-        if (this.isDie) {
-            return;
+    die() {
+        this.isDie = true;
+        if (this.role.isValid) {
+            this.role.destroy();
         }
-        this.rigbody.linearDamping = 1;
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

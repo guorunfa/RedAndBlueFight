@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game } from 'cc';
+import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
@@ -8,7 +9,7 @@ const PeopleGunMaxHp: number = 100;
 const PeopleGunAtk: number = 40;
 const PeopleGunAtkInterval: number = 3;
 const PeopleGunAtkDistance: number = 30;
-const PeopleGunMoveSpeed: number = 20;
+const PeopleGunMoveSpeed: number = 15;
 
 export class PeopleRpg {
 
@@ -35,7 +36,6 @@ export class PeopleRpg {
 
         this.role = people;
         this.role.on("hit", this.hit, this);
-        game.on("over", this.over, this);
         this.team = team;
         this.maxHp = PeopleGunMaxHp;
         this.hp = this.maxHp;
@@ -86,7 +86,7 @@ export class PeopleRpg {
         this.isTriggerEnter = true;
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
-        this.anim.play("gun_atk_idle");
+        this.anim.play("rpg_atk");
         this.doAtk(event.otherCollider.node);
     }
 
@@ -109,6 +109,8 @@ export class PeopleRpg {
                 clearInterval(this.atkCall)
                 return;
             }
+            let effectPos = new Vec3(target.position.x > 0 ? target.position.x - 10 : target.position.x + 10, 0, this.role.position.z);
+            EffectManager.playEfect(EffectType.BOOM_1, effectPos);
             target.emit("hit", this.atk)
         }, this.atkInterval * 1000, this);
 
@@ -130,11 +132,11 @@ export class PeopleRpg {
         }
     }
 
-    over() {
-        if (this.isDie) {
-            return;
+    die() {
+        this.isDie = true;
+        if (this.role.isValid) {
+            this.role.destroy();
         }
-        this.rigbody.linearDamping = 1;
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }
