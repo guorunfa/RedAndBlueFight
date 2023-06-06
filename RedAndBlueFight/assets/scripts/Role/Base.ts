@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, CCObject, game, Vec3, random, math, ITriggerEvent, Collider, BoxCollider } from 'cc';
+import { _decorator, Component, Node, CCObject, game, Vec3, random, math, ITriggerEvent, Collider, BoxCollider, SphereCollider, physics, ParticleSystem } from 'cc';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import Tools from '../Tools';
@@ -16,12 +16,13 @@ export class Base {
     maxHp: number;
     hp: number;
     isDie: boolean;
+    atk: number;
 
-    triggerCollider: BoxCollider = null;
+    atkTrigger: SphereCollider = null;
     shield: Node;
     shieldCountTime: number;
-    leftFire: Node = null;
-    rightFire: Node = null;
+    leftFire: ParticleSystem = null;
+    rightFire: ParticleSystem = null;
 
     constructor(team: TEAM, role: Node) {
         this.team = team;
@@ -31,42 +32,52 @@ export class Base {
         this.hp = this.maxHp;
         this.setHp();
         this.shieldCountTime = 0;
+        this.atk = atk;
         this.isDie = false;
         // this.shield = this.role.getChildByName("Shield");
         // this.shield.active = false;
-        this.leftFire = this.role.getChildByName("LeftFire");
-        this.rightFire = this.role.getChildByName("RightFire");
-
-        this.triggerCollider = this.role.getComponent(BoxCollider);
-        this.triggerCollider.on("onTriggerStay", this.onTriggerStay, this);
+        this.leftFire = this.role.getChildByName("LeftFire").getComponent(ParticleSystem);
+        this.rightFire = this.role.getChildByName("RightFire").getComponent(ParticleSystem);
+        this.atkTrigger = this.role.getComponent(SphereCollider);
+        this.atkTrigger.on("onTriggerStay", this.onTriggerStay, this);
+        this.atkTrigger.on("onTriggerExit", this.onTriggerExit, this);
     }
 
-    currentCollider: Collider;
+    currentTrigger: Collider;
     onTriggerStay(event: ITriggerEvent) {
-        return;
-        if ((this.currentCollider && this.currentCollider.node.isValid) || this.isDie) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger)) {
             return;
         }
-        this.currentCollider = event.otherCollider;
+        this.currentTrigger = event.otherCollider;
         this.doAtk(event.otherCollider.node);
+    }
+
+    onTriggerExit(event: ITriggerEvent) {
+        if (this.currentTrigger == event.otherCollider) {
+            this.currentTrigger = null;
+        }
     }
 
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
-            if (!target || (target && !target.isValid) || this.isDie) {
-                this.currentCollider = null;
+            if (!target.isValid || this.isDie) {
+                this.currentTrigger = null;
                 clearInterval(this.atkCall)
                 return;
             }
-            let posNode = math.random() > 0.5 ? this.leftFire : this.rightFire;
-            let pos = Tools.convertToNodePos(EffectManager.effectParent, posNode);
-            let effectType = this.team == TEAM.RED ? EffectType.FIRE_RED : EffectType.FIRE_BLUE;
-            // EffectManager.playEfect(effectType, pos);
+            let fire = math.random() > 0.5 ? this.leftFire : this.rightFire;
+            fire.play();
+            let effectPos = new Vec3(target.position.x, 0, target.position.z);
+            EffectManager.playEfect(EffectType.BOOM_1, effectPos);
             if (target.isValid) {
-                EffectManager.playEfect(EffectType.BOOM_1, target.position);
+                target.emit("hit", this.atk);
+                if (!target.isValid || this.isDie) {
+                    this.currentTrigger = null;
+                    clearInterval(this.atkCall)
+                    return;
+                }
             }
-            target.emit("hit", atk)
         }, atkInterval * 1000, this);
     }
 
@@ -92,8 +103,12 @@ export class Base {
 
     baseDie() {
         this.isDie = true;
-        clearInterval(this.atkCall)
-        this.role.off("onTriggerEnter");
+        this.currentTrigger = null;
+        if (this.role.isValid) {
+            this.atkTrigger.off("onTriggerStay");
+            this.atkTrigger.off("onTriggerExit");
+        }
+        clearInterval(this.atkCall);
         game.emit("over");
     }
 

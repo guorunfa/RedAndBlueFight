@@ -178,6 +178,7 @@ export class GameManager extends Component {
                 this.uiManager.showTips(team, tips);
                 break;
             case "4"://召唤一组护盾兵-red*5
+                break;
                 for (let i = 0; i < 5; i++) {
                     let shield = new PeopleShield(team, parent, bornPos, enemyBase);
                     this.redTeam.roles.push(shield);

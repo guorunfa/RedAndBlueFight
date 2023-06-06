@@ -1,4 +1,5 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, Collider, physics } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, Collider, physics, ParticleSystem } from 'cc';
+import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
@@ -21,6 +22,7 @@ export class Airplane {
     atkInterval: number;
     atkDistance: number;
     anim: SkeletalAnimation;
+    fireEf: ParticleSystem;
     rigbody: RigidBody;
     trgCollider: SphereCollider;
     enemyBase: Base;
@@ -28,7 +30,7 @@ export class Airplane {
     isDie: boolean;
 
     constructor(team: TEAM, parent: Node, bornPos: Vec3, enemyBase: Base) {
-        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_people_gun : PrefabManager.prefab_blue_people_gun;
+        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_airplane : PrefabManager.prefab_blue_airplane;
         let people = instantiate(prefab);
         people.parent = parent;
         people.position = bornPos;
@@ -45,50 +47,45 @@ export class Airplane {
         this.anim = this.role.getComponent(SkeletalAnimation);
         this.rigbody = this.role.getComponent(RigidBody);
         this.trgCollider = this.role.getComponent(SphereCollider);
+        this.fireEf = this.role.getChildByName("Fire").getComponent(ParticleSystem);
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
         this.trgCollider.on("onTriggerExit", this.onTriggerExit, this);
         this.isAtking = false;
         this.isDie = false;
-        let time = Tools.getRandomNum(0, 2);
-        setTimeout(() => {
-            this.move();
-        }, time * 100);
+        this.move();
     }
 
     moveInterval;
     move() {
-        if (this.isDie) {
-            return;
-        }
-        console.log("角色移动");
+        console.log("飞机移动");
+        this.anim.play("atk");
         let temp = this.team == TEAM.RED ? 1 : -1;
         this.rigbody.linearDamping = 0;
         this.moveInterval = setInterval(() => {
+            if (this.currentTrigger) {
+                return;
+            }
             if (this.isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
-            this.anim.play("atk");
             this.rigbody.setLinearVelocity(new Vec3(temp * AirplaneMoveSpeed, 0, 0));
         }, 1000, this);
     }
 
 
-    isTriggerEnter: boolean = false;
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || this.isTriggerEnter) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
             return;
         }
-        this.isTriggerEnter = true;
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
         this.doAtk(event.otherCollider.node);
     }
 
     onTriggerExit(event: ITriggerEvent) {
-        if (this.isTriggerEnter && this.currentTrigger == event.otherCollider) {
-            this.isTriggerEnter = false;
+        if (this.currentTrigger == event.otherCollider) {
             this.currentTrigger = null;
             this.rigbody.linearDamping = 0;
         }
@@ -98,14 +95,21 @@ export class Airplane {
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
             if (!target.isValid || this.isDie) {
-                this.isTriggerEnter = false;
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
-            console.log(this.role.position);
-            target.emit("hit", this.atk)
+            this.fireEf.play();
+            if (target.isValid) {
+                target.emit("hit", this.atk);
+                if (!target.isValid || this.isDie) {
+                    this.currentTrigger = null;
+                    this.rigbody.linearDamping = 0;
+                    clearInterval(this.atkCall)
+                    return;
+                }
+            }
         }, this.atkInterval * 1000, this);
     }
 
@@ -116,18 +120,17 @@ export class Airplane {
         console.log("受到攻击");
         this.hp -= atkValue;
         if (this.hp <= 0) {
-            console.log("死亡:", this.role.name);
-            this.isDie = true;
-            this.isTriggerEnter = false;
-            clearInterval(this.atkCall);
-            clearInterval(this.moveInterval);
-            this.role.destroy();
+            this.die();
         }
     }
 
     die() {
+        console.log("死亡:", this.role.name);
         this.isDie = true;
+        this.currentTrigger = null;
         if (this.role.isValid) {
+            this.trgCollider.off("onTriggerStay");
+            this.trgCollider.off("onTriggerExit");
             this.role.destroy();
         }
         clearInterval(this.atkCall);

@@ -199,7 +199,7 @@
       "name": "gun_atk_idle.animation",
       "userData": {
         "gltfIndex": 0,
-        "wrapMode": 2,
+        "wrapMode": 0,
         "speed": 1,
         "sample": 30,
         "span": {
@@ -295,7 +295,7 @@
       "name": "rpg_atk.animation",
       "userData": {
         "gltfIndex": 0,
-        "wrapMode": 2,
+        "wrapMode": 0,
         "speed": 1,
         "sample": 30,
         "span": {
@@ -343,7 +343,7 @@
       "name": "shield_atk.animation",
       "userData": {
         "gltfIndex": 0,
-        "wrapMode": 2,
+        "wrapMode": 0,
         "speed": 1,
         "sample": 30,
         "span": {
@@ -575,7 +575,7 @@
             "name": "gun_atk_idle",
             "from": 3.7,
             "to": 4.333333333333333,
-            "wrapMode": 2,
+            "wrapMode": 0,
             "speed": 1
           },
           {
@@ -604,7 +604,7 @@
             "name": "rpg_atk",
             "from": 13.366666666666667,
             "to": 14.333333333333334,
-            "wrapMode": 2,
+            "wrapMode": 0,
             "speed": 1
           },
           {
@@ -618,7 +618,7 @@
             "name": "shield_atk",
             "from": 16.7,
             "to": 18,
-            "wrapMode": 2,
+            "wrapMode": 0,
             "speed": 1
           },
           {

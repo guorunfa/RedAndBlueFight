@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game, Layers } from 'cc';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
@@ -49,6 +49,7 @@ export class PeopleRpg {
         this.phyCollider = this.role.getComponent(CapsuleCollider);
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
         this.trgCollider.on("onTriggerExit", this.onTriggerExit, this);
+        this.phyCollider.on("onTriggerStay", this.onBoom, this);
         this.isAtking = false;
         this.isDie = false;
         this.move();
@@ -56,45 +57,44 @@ export class PeopleRpg {
 
     moveInterval;
     move() {
-        if (this.isDie) {
-            return;
-        }
-        console.log("角色移动");
+        console.log("Rpg移动");
         let temp = this.team == TEAM.RED ? 1 : -1;
         this.rigbody.linearDamping = 0;
         this.moveInterval = setInterval(() => {
+            if (this.currentTrigger) {
+                return;
+            }
             if (this.isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
-            if (this.rigbody.linearDamping == 1) {
-                this.anim.play("rpg_atk");
-            } else {
-                this.anim.play("rpg_move");
-            }
+            this.anim.play("rpg_move");
             this.rigbody.setLinearVelocity(new Vec3(temp * PeopleGunMoveSpeed, 0, 0));
-        }, 1000, this);
+        }, 500, this);
     }
 
-
-    isTriggerEnter: boolean = false;
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || this.isTriggerEnter) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
             return;
         }
-        this.isTriggerEnter = true;
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
-        this.anim.play("rpg_atk");
+        this.anim.stop();
         this.doAtk(event.otherCollider.node);
     }
 
     onTriggerExit(event: ITriggerEvent) {
-        if (this.isTriggerEnter && this.currentTrigger == event.otherCollider) {
-            this.isTriggerEnter = false;
+        if (this.currentTrigger == event.otherCollider) {
             this.currentTrigger = null;
             this.rigbody.linearDamping = 0;
+        }
+    }
+
+    onBoom(event: ICollisionEvent) {
+        if (event.otherCollider.node.name == "boom_1") {
+            console.log("被炸到了");
+            this.die();
         }
     }
 
@@ -102,18 +102,28 @@ export class PeopleRpg {
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
-            if (!target.isValid) {
-                this.isTriggerEnter = false;
+            if (!target.isValid || this.isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
-            let effectPos = new Vec3(target.position.x > 0 ? target.position.x - 10 : target.position.x + 10, 0, this.role.position.z);
+            this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
+                this.anim.stop();
+            })
+            this.anim.play("rpg_atk");
+            let effectPos = new Vec3(target.position.x, 0, target.position.z);
             EffectManager.playEfect(EffectType.BOOM_1, effectPos);
-            target.emit("hit", this.atk)
+            if (target.isValid) {
+                target.emit("hit", this.atk);
+                if (!target.isValid || this.isDie) {
+                    this.currentTrigger = null;
+                    this.rigbody.linearDamping = 0;
+                    clearInterval(this.atkCall)
+                    return;
+                }
+            }
         }, this.atkInterval * 1000, this);
-
     }
 
     hit(atkValue: number) {
@@ -123,18 +133,18 @@ export class PeopleRpg {
         console.log("受到攻击");
         this.hp -= atkValue;
         if (this.hp <= 0) {
-            console.log("死亡:", this.role.name);
-            this.isDie = true;
-            this.isTriggerEnter = false;
-            clearInterval(this.atkCall);
-            clearInterval(this.moveInterval);
-            this.role.destroy();
+            this.die();
         }
     }
 
     die() {
+        console.log("死亡:", this.role.name);
         this.isDie = true;
+        this.currentTrigger = null;
         if (this.role.isValid) {
+            this.trgCollider.off("onTriggerStay");
+            this.trgCollider.off("onTriggerExit");
+            this.phyCollider.off("onTriggerStay");
             this.role.destroy();
         }
         clearInterval(this.atkCall);

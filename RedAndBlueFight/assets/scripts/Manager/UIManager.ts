@@ -1,5 +1,6 @@
-import { _decorator, Component, Node, EditBox, Enum, Label, game, Prefab, instantiate, NodePool, ProgressBar, Sprite } from 'cc';
+import { _decorator, Component, Node, EditBox, Enum, Label, game, Prefab, instantiate, NodePool, ProgressBar, Sprite, math } from 'cc';
 import { BaseMaxHp } from '../Role/Base';
+import Tools from '../Tools';
 import { TEAM } from './GameManager';
 import { InputManager } from './InputManager';
 import { PrefabManager } from './PrefabManager';
@@ -82,6 +83,15 @@ export class UIManager extends Component {
     //展示排行榜
     showRank() {
         this.UIInit();
+        for (let i = 0; i < 10; i++) {
+            let name = "玩家" + i;
+            let score = Math.floor(math.random() * 100) + i * 1000;
+            let obj = {
+                name: name,
+                score: score
+            }
+            UIManager.rankListLocal.push(obj)
+        }
         this.rankPanelLocal.removeAllChildren();
         this.rankPanelWorld.removeAllChildren();
 
@@ -94,6 +104,16 @@ export class UIManager extends Component {
                 rankItem.getChildByName("Score").getComponent(Label).string = UIManager.rankListLocal[i].score;
                 this.rankPanelLocal.addChild(rankItem);
             }
+        }
+
+        for (let i = 0; i < 10; i++) {
+            let name = "玩家" + i;
+            let score = Math.floor(math.random() * 1000) + i * 10000;
+            let obj = {
+                name: name,
+                score: score
+            }
+            UIManager.rankListWorld.push(obj)
         }
 
         if (UIManager.rankListWorld.length > 0) {

@@ -13,17 +13,22 @@
     {
       "name": "蓝",
       "value": 2
+    },
+    {
+      "name": "炮弹",
+      "value": 4
     }
   ],
   "physics": {
     "collisionMatrix": {
       "0": 0,
-      "1": 94,
-      "2": 62,
+      "1": 222,
+      "2": 190,
       "3": 6,
       "4": 6,
       "5": 4,
-      "6": 2
+      "6": 2,
+      "7": 6
     },
     "collisionGroups": [
       {
@@ -49,6 +54,10 @@
       {
         "index": 6,
         "name": "BLUEBASE"
+      },
+      {
+        "index": 7,
+        "name": "BULLET"
       }
     ],
     "defaultMaterial": "d66ea836-5da0-4c2e-9c9f-6e58e69a1c47",

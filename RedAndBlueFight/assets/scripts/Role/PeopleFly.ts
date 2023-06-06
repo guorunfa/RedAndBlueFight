@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, CapsuleCollider, game, Collider, ICollisionEvent, physics } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, CapsuleCollider, game, Collider, ICollisionEvent, physics, ParticleSystem } from 'cc';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
@@ -22,6 +22,7 @@ export class PeopleFly {
     anim: SkeletalAnimation;
     rigbody: RigidBody;
     trgCollider: SphereCollider;
+    fireEf: ParticleSystem;
     enemyBase: Base;
     isAtking: boolean;
     isDie: boolean;
@@ -42,6 +43,7 @@ export class PeopleFly {
         this.atkDistance = PeopleFlyAtkDistance;
         this.enemyBase = enemyBase;
         this.anim = this.role.getComponent(SkeletalAnimation);
+        this.fireEf = this.role.getChildByName("Gun").getChildByName("Fire").getComponent(ParticleSystem);
         this.rigbody = this.role.getComponent(RigidBody);
         this.trgCollider = this.role.getComponent(SphereCollider);
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
@@ -56,11 +58,14 @@ export class PeopleFly {
         if (this.isDie) {
             return;
         }
-        console.log("角色移动");
+        console.log("fly移动");
+        this.anim.play("fly_atk");
         let temp = this.team == TEAM.RED ? 1 : -1;
         this.rigbody.linearDamping = 0;
-        this.anim.play("fly_atk");
         this.moveInterval = setInterval(() => {
+            if (this.currentTrigger) {
+                return;
+            }
             if (this.isDie) {
                 clearInterval(this.moveInterval);
                 return;
@@ -70,21 +75,19 @@ export class PeopleFly {
     }
 
 
-    isTriggerEnter: boolean = false;
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || this.isTriggerEnter) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
             return;
         }
-        this.isTriggerEnter = true;
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
+        this.anim.stop();
         this.doAtk(event.otherCollider.node);
     }
 
     onTriggerExit(event: ITriggerEvent) {
-        if (this.isTriggerEnter && this.currentTrigger == event.otherCollider) {
-            this.isTriggerEnter = false;
+        if (this.currentTrigger == event.otherCollider) {
             this.currentTrigger = null;
             this.rigbody.linearDamping = 0;
         }
@@ -95,13 +98,21 @@ export class PeopleFly {
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
             if (!target.isValid) {
-                this.isTriggerEnter = false;
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
-            target.emit("hit", this.atk)
+            this.fireEf.play();
+            if (target.isValid) {
+                target.emit("hit", this.atk);
+                if (!target.isValid || this.isDie) {
+                    this.currentTrigger = null;
+                    this.rigbody.linearDamping = 0;
+                    clearInterval(this.atkCall)
+                    return;
+                }
+            }
         }, this.atkInterval * 1000, this);
 
     }
@@ -113,18 +124,17 @@ export class PeopleFly {
         console.log("受到攻击");
         this.hp -= atkValue;
         if (this.hp <= 0) {
-            console.log("死亡:", this.role.name);
-            this.isDie = true;
-            this.isTriggerEnter = false;
-            clearInterval(this.atkCall);
-            clearInterval(this.moveInterval);
-            this.role.destroy();
+            this.die();
         }
     }
 
     die() {
+        console.log("死亡:", this.role.name);
         this.isDie = true;
+        this.currentTrigger = null;
         if (this.role.isValid) {
+            this.trgCollider.off("onTriggerStay");
+            this.trgCollider.off("onTriggerExit");
             this.role.destroy();
         }
         clearInterval(this.atkCall);

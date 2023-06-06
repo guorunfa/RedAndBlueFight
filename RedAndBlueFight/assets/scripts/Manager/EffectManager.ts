@@ -40,9 +40,7 @@ export class EffectManager {
         effect.setPosition(pos);
         let partic = effect.getComponent(ParticleSystem);
         partic.play();
-        console.log("播放特效", partic.duration);
         setTimeout(() => {
-            console.log("特效销毁");
             effect.destroy();
         }, partic.duration * 1000);
     }

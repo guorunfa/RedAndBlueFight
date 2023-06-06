@@ -29,7 +29,7 @@ export class PeopleShield {
     isDie: boolean;
 
     constructor(team: TEAM, parent: Node, bornPos: Vec3, enemyBase: Base) {
-        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_people_gun : PrefabManager.prefab_blue_people_gun;
+        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_people_shield : PrefabManager.prefab_blue_people_shield;
         let people = instantiate(prefab);
         people.parent = parent;
         people.position = bornPos;
@@ -49,8 +49,7 @@ export class PeopleShield {
         this.phyCollider = this.role.getComponent(CapsuleCollider);
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
         this.trgCollider.on("onTriggerExit", this.onTriggerExit, this);
-        this.phyCollider.on("onCollisionStay", this.onCollisionStay, this);
-        this.phyCollider.on("onCollisionExit", this.onCollisionExit, this);
+        this.phyCollider.on("onCollisionStay", this.onBoom, this);
         this.isAtking = false;
         this.isDie = false;
         let time = Tools.getRandomNum(0, 2);
@@ -103,14 +102,11 @@ export class PeopleShield {
         }
     }
 
-    onCollisionStay(event: ICollisionEvent) {
-
-    }
-
-
-
-    onCollisionExit(event: ICollisionEvent) {
-
+    onBoom(event: ICollisionEvent) {
+        if (event.otherCollider.node.name == "boom_1") {
+            console.log("被炸到了");
+            this.die();
+        }
     }
 
     atkCall;

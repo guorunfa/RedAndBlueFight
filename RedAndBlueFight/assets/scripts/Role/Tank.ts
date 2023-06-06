@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, Collider, RigidBody, SphereCollider, ICollisionEvent, physics } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, Collider, RigidBody, SphereCollider, ICollisionEvent, physics, ParticleSystem } from 'cc';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
@@ -7,7 +7,7 @@ import { Base } from './Base';
 
 const TankMaxHp: number = 1000;
 const TankAtk: number = 1;
-const TankAtkInterval: number = 3;
+const TankAtkInterval: number = 2;
 const TankAtkDistance: number = 3;
 const TankMoveSpeed: number = 15;
 
@@ -21,6 +21,7 @@ export class Tank {
     atkInterval: number;
     atkDistance: number;
     anim: SkeletalAnimation;
+    fireEf: ParticleSystem;
     rigbody: RigidBody;
     trgCollider: SphereCollider;
     phyCollider: BoxCollider;
@@ -29,7 +30,7 @@ export class Tank {
     isDie: boolean;
 
     constructor(team: TEAM, parent: Node, bornPos: Vec3, enemyBase: Base) {
-        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_people_gun : PrefabManager.prefab_blue_people_gun;
+        let prefab = team == TEAM.RED ? PrefabManager.prefab_red_tank : PrefabManager.prefab_blue_tank;
         let people = instantiate(prefab);
         people.parent = parent;
         people.position = bornPos;
@@ -47,14 +48,14 @@ export class Tank {
         this.rigbody = this.role.getComponent(RigidBody);
         this.trgCollider = this.role.getComponent(SphereCollider);
         this.phyCollider = this.role.getComponent(BoxCollider);
+        this.fireEf = this.role.getChildByName("Fire").getComponent(ParticleSystem);
+
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
         this.trgCollider.on("onTriggerExit", this.onTriggerExit, this);
+        this.phyCollider.on("onTriggerStay", this.onBoom, this);
         this.isAtking = false;
         this.isDie = false;
-        let time = Tools.getRandomNum(0, 2);
-        setTimeout(() => {
-            this.move();
-        }, time * 100);
+        this.move();
     }
 
     moveInterval;
@@ -66,6 +67,9 @@ export class Tank {
         let temp = this.team == TEAM.RED ? 1 : -1;
         this.rigbody.linearDamping = 0;
         this.moveInterval = setInterval(() => {
+            if (this.currentTrigger) {
+                return;
+            }
             if (this.isDie) {
                 clearInterval(this.moveInterval);
                 return;
@@ -75,25 +79,28 @@ export class Tank {
         }, 1000, this);
     }
 
-
-    isTriggerEnter: boolean = false;
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || this.isTriggerEnter) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
             return;
         }
-        this.isTriggerEnter = true;
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
-
+        this.anim.stop();
         this.doAtk(event.otherCollider.node);
     }
 
     onTriggerExit(event: ITriggerEvent) {
-        if (this.isTriggerEnter && this.currentTrigger == event.otherCollider) {
-            this.isTriggerEnter = false;
+        if (this.currentTrigger == event.otherCollider) {
             this.currentTrigger = null;
             this.rigbody.linearDamping = 0;
+        }
+    }
+
+    onBoom(event: ICollisionEvent) {
+        if (event.otherCollider.node.name == "boom_1") {
+            console.log("被炸到了");
+            this.hit(this.maxHp / 3);
         }
     }
 
@@ -101,15 +108,23 @@ export class Tank {
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
             if (!target.isValid || this.isDie) {
-                this.isTriggerEnter = false;
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
-            let effectPos = new Vec3(target.position.x > 0 ? target.position.x - 10 : target.position.x + 10, 0, this.role.position.z);
+            this.fireEf.play();
+            let effectPos = new Vec3(target.position.x, 0, target.position.z);
             EffectManager.playEfect(EffectType.BOOM_1, effectPos);
-            target.emit("hit", this.atk)
+            if (target.isValid) {
+                target.emit("hit", this.atk);
+                if (!target.isValid || this.isDie) {
+                    this.currentTrigger = null;
+                    this.rigbody.linearDamping = 0;
+                    clearInterval(this.atkCall)
+                    return;
+                }
+            }
         }, this.atkInterval * 1000, this);
     }
 
@@ -120,18 +135,18 @@ export class Tank {
         console.log("受到攻击");
         this.hp -= atkValue;
         if (this.hp <= 0) {
-            console.log("死亡:", this.role.name);
-            this.isDie = true;
-            this.isTriggerEnter = false;
-            clearInterval(this.atkCall);
-            clearInterval(this.moveInterval);
-            this.role.destroy();
+            this.die();
         }
     }
 
     die() {
+        console.log("死亡:", this.role.name);
         this.isDie = true;
+        this.currentTrigger = null;
         if (this.role.isValid) {
+            this.trgCollider.off("onTriggerStay");
+            this.trgCollider.off("onTriggerExit");
+            this.phyCollider.off("onTriggerStay");
             this.role.destroy();
         }
         clearInterval(this.atkCall);
