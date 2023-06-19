@@ -4029,6 +4029,8 @@
       "__id__": 0
     },
     "fileId": "c8XOijo81Imqr40D8vcMXV",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -4159,7 +4161,7 @@
       "y": 0,
       "z": 0
     },
-    "_radius": 21.301,
+    "_radius": 25,
     "_id": ""
   },
   {
@@ -4176,6 +4178,7 @@
     },
     "fileId": "2dQZM9C9RP3ZcUedJZ4ozg",
     "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": [
       {
         "__id__": 130

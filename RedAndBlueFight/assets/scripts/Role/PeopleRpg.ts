@@ -1,15 +1,16 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game, Layers } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
 
 
-const PeopleGunMaxHp: number = 100;
-const PeopleGunAtk: number = 40;
-const PeopleGunAtkInterval: number = 3;
-const PeopleGunAtkDistance: number = 30;
-const PeopleGunMoveSpeed: number = 15;
+const PeopleRpgMaxHp: number = 100;
+const PeopleRpgAtk: number = 40;
+const PeopleRpgAtkInterval: number = 2;
+const PeopleRpgAtkDistance: number = 30;
+const PeopleRpgMoveSpeed: number = 20;
 
 export class PeopleRpg {
 
@@ -37,11 +38,11 @@ export class PeopleRpg {
         this.role = people;
         this.role.on("hit", this.hit, this);
         this.team = team;
-        this.maxHp = PeopleGunMaxHp;
+        this.maxHp = PeopleRpgMaxHp;
         this.hp = this.maxHp;
-        this.atk = PeopleGunAtk;
-        this.atkInterval = PeopleGunAtkInterval;
-        this.atkDistance = PeopleGunAtkDistance;
+        this.atk = PeopleRpgAtk;
+        this.atkInterval = PeopleRpgAtkInterval;
+        this.atkDistance = PeopleRpgAtkDistance;
         this.enemyBase = enemyBase;
         this.anim = this.role.getComponent(SkeletalAnimation);
         this.rigbody = this.role.getComponent(RigidBody);
@@ -69,13 +70,13 @@ export class PeopleRpg {
                 return;
             }
             this.anim.play("rpg_move");
-            this.rigbody.setLinearVelocity(new Vec3(temp * PeopleGunMoveSpeed, 0, 0));
+            this.rigbody.setLinearVelocity(new Vec3(temp * PeopleRpgMoveSpeed, 0, 0));
         }, 500, this);
     }
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -94,7 +95,7 @@ export class PeopleRpg {
     onBoom(event: ICollisionEvent) {
         if (event.otherCollider.node.name == "boom_1") {
             console.log("被炸到了");
-            this.die();
+            this.hit(this.atk);
         }
     }
 
@@ -102,6 +103,7 @@ export class PeopleRpg {
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
+            console.log("currentTrigger-------------------", this.currentTrigger.node);
             if (!target.isValid || this.isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
@@ -112,16 +114,21 @@ export class PeopleRpg {
                 this.anim.stop();
             })
             this.anim.play("rpg_atk");
-            let effectPos = new Vec3(target.position.x, 0, target.position.z);
-            EffectManager.playEfect(EffectType.BOOM_1, effectPos);
             if (target.isValid) {
-                target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    this.rigbody.linearDamping = 0;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                let pos = this.role.position;
+                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                BulletPool.getInstance().shotBullet_1(pos, target.position, this.role.parent, () => {
+                    EffectManager.playEfect(EffectType.BOOM_1, effectPos);
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        this.rigbody.linearDamping = 0;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                    if (target.name == "RedBase" || target.name == "BlueBase") {
+                        target.emit("hit", this.atk);
+                    }
+                });
             }
         }, this.atkInterval * 1000, this);
     }

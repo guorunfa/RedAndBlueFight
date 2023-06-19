@@ -1,4 +1,5 @@
-import { _decorator, Component, Node, CCObject, game, Vec3, random, math, ITriggerEvent, Collider, BoxCollider, SphereCollider, physics, ParticleSystem } from 'cc';
+import { _decorator, Component, Node, CCObject, game, Vec3, random, math, ITriggerEvent, Collider, BoxCollider, SphereCollider, physics, ParticleSystem, ICollisionEvent } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import Tools from '../Tools';
@@ -7,7 +8,7 @@ import Tools from '../Tools';
 export const BaseMaxHp: number = 10000;
 export const BaseShieldTime: number = 25;
 const atk: number = 100;
-const atkInterval: number = 4;
+const atkInterval: number = 2;
 
 export class Base {
 
@@ -68,15 +69,17 @@ export class Base {
             }
             let fire = math.random() > 0.5 ? this.leftFire : this.rightFire;
             fire.play();
-            let effectPos = new Vec3(target.position.x, 0, target.position.z);
-            EffectManager.playEfect(EffectType.BOOM_1, effectPos);
             if (target.isValid) {
-                target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                let pos = Tools.convertToNodePos(this.role.parent, fire.node);
+                BulletPool.getInstance().shotBullet_1(pos, target.position, this.role.parent, () => {
+                    EffectManager.playEfect(EffectType.BOOM_1, effectPos);
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                });
             }
         }, atkInterval * 1000, this);
     }

@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, Collider, RigidBody, SphereCollider, ICollisionEvent, physics, ParticleSystem } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
@@ -9,7 +10,7 @@ const TankMaxHp: number = 1000;
 const TankAtk: number = 1;
 const TankAtkInterval: number = 2;
 const TankAtkDistance: number = 3;
-const TankMoveSpeed: number = 15;
+const TankMoveSpeed: number = 10;
 
 export class Tank {
 
@@ -74,14 +75,14 @@ export class Tank {
                 clearInterval(this.moveInterval);
                 return;
             }
-            this.anim.play("atk");
+            // this.anim.play("atk");
             this.rigbody.setLinearVelocity(new Vec3(temp * TankMoveSpeed, 0, 0));
         }, 1000, this);
     }
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -100,7 +101,7 @@ export class Tank {
     onBoom(event: ICollisionEvent) {
         if (event.otherCollider.node.name == "boom_1") {
             console.log("被炸到了");
-            this.hit(this.maxHp / 3);
+            this.hit(this.maxHp / 5);
         }
     }
 
@@ -114,16 +115,21 @@ export class Tank {
                 return;
             }
             this.fireEf.play();
-            let effectPos = new Vec3(target.position.x, 0, target.position.z);
-            EffectManager.playEfect(EffectType.BOOM_1, effectPos);
             if (target.isValid) {
-                target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    this.rigbody.linearDamping = 0;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                let pos = Tools.convertToNodePos(this.role.parent, this.fireEf.node);
+                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                BulletPool.getInstance().shotBullet_1(pos, target.position, this.role.parent, () => {
+                    EffectManager.playEfect(EffectType.BOOM_1, effectPos);
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        this.rigbody.linearDamping = 0;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                    if (target.name == "RedBase" || target.name == "BlueBase") {
+                        target.emit("hit", this.atk);
+                    }
+                });
             }
         }, this.atkInterval * 1000, this);
     }

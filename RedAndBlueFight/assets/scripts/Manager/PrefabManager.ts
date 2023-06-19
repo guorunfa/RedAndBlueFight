@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, Prefab, resources, Game, game } from 'cc';
+import { BulletPool } from './BulletPool';
 const { ccclass, property } = _decorator;
 
 @ccclass('PrefabManager')
@@ -90,6 +91,12 @@ export class PrefabManager {
                 })
                 this.prefab_red_people_gun_0 = assets.find((prefab) => {
                     return prefab.name == "red_people_gun_0";
+                })
+                BulletPool.getInstance().bulletPrefab_0 = assets.find((prefab) => {
+                    return prefab.name == "bullet_0";
+                })
+                BulletPool.getInstance().bulletPrefab_1 = assets.find((prefab) => {
+                    return prefab.name == "bullet_1";
                 })
 
                 resources.loadDir("prefabs/ui", Prefab, (err, assets: Prefab[]) => {

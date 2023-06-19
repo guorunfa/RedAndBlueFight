@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, Collider, physics, ParticleSystem } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
@@ -8,9 +9,9 @@ import { Base } from './Base';
 
 const AirplaneMaxHp: number = 100;
 const AirplaneAtk: number = 1;
-const AirplaneAtkInterval: number = 3;
+const AirplaneAtkInterval: number = 1;
 const AirplaneAtkDistance: number = 3;
-const AirplaneMoveSpeed: number = 20;
+const AirplaneMoveSpeed: number = 10;
 
 export class Airplane {
 
@@ -103,12 +104,18 @@ export class Airplane {
             this.fireEf.play();
             if (target.isValid) {
                 target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    this.rigbody.linearDamping = 0;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                let pos = Tools.convertToNodePos(this.role.parent, this.fireEf.node);
+                BulletPool.getInstance().shotBullet_0(pos, target.position, this.role.parent, () => {
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        this.rigbody.linearDamping = 0;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                    if (target.name == "RedBase" || target.name == "BlueBase") {
+                        target.emit("hit", this.atk);
+                    }
+                });
             }
         }, this.atkInterval * 1000, this);
     }

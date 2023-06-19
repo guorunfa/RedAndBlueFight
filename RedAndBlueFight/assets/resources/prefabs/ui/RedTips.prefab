@@ -567,7 +567,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
+      "width": 75,
       "height": 31.5
     },
     "_anchorPoint": {
@@ -602,7 +602,7 @@
       "b": 29,
       "a": 255
     },
-    "_string": "召唤",
+    "_string": "召唤了",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -661,7 +661,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": -26.823,
-      "y": 66.451,
+      "y": 55,
       "z": 0
     },
     "_lrot": {
@@ -1022,6 +1022,7 @@
       "__id__": 0
     },
     "fileId": "b1bwa2mvNA0KrQuqKyCyt1",
+    "instance": null,
     "targetOverrides": null
   }
 ]

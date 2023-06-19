@@ -137,13 +137,14 @@ export class UIManager extends Component {
         }
         let tipsNode = team == TEAM.RED ? instantiate(PrefabManager.prefab_redTips) : instantiate(PrefabManager.prefab_blueTips);
         // tipsNode.getChildByName("ProfileMask").children[0].getComponent(Sprite).spriteFrame = tips.profile;
-        tipsNode.getChildByName("Name").getComponent(Label).string = tips.name;
+        tipsNode.getChildByName("Name").getComponent(Label).string = "玩家：" + tips.name;
         tipsNode.getChildByName("Tips").getComponent(Label).string = tips.msg;
-        tipsNode.getChildByName("Tips").getComponent(Label).string = tips.combo;
+        tipsNode.getChildByName("Combo").getComponent(Label).string = tips.combo;
         tipsNode.setParent(this.gameTips);
+        this.gameTips.active = true;
         this.scheduleOnce(() => {
             tipsNode.active = false;
-        }, 1);
+        }, 2);
 
     }
 

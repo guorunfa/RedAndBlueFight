@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game, ParticleSystem } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
@@ -8,9 +9,9 @@ import { Base } from './Base';
 
 const PeopleGunMaxHp: number = 100;
 const PeopleGunAtk: number = 40;
-const PeopleGunAtkInterval: number = 3;
+const PeopleGunAtkInterval: number = 1;
 const PeopleGunAtkDistance: number = 30;
-const PeopleGunMoveSpeed: number = 30;
+const PeopleGunMoveSpeed: number = 25;
 
 export class PeopleGun {
 
@@ -82,7 +83,7 @@ export class PeopleGun {
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX)) {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -122,12 +123,14 @@ export class PeopleGun {
             this.fireEf.play();
             if (target.isValid) {
                 target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    this.rigbody.linearDamping = 0;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                BulletPool.getInstance().shotBullet_0(this.fireEf.node.position, target.position, this.role.parent, () => {
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        this.rigbody.linearDamping = 0;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                });
             }
         }, this.atkInterval * 1000, this);
     }

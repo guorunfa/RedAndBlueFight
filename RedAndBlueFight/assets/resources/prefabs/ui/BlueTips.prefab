@@ -527,7 +527,7 @@
     },
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -26.823,
+      "x": -22.015,
       "y": 88.172,
       "z": 0
     },
@@ -567,7 +567,7 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
+      "width": 75,
       "height": 31.5
     },
     "_anchorPoint": {
@@ -602,7 +602,7 @@
       "b": 29,
       "a": 255
     },
-    "_string": "召唤",
+    "_string": "召唤了",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
@@ -661,7 +661,7 @@
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": -26.823,
-      "y": 66.451,
+      "y": 55,
       "z": 0
     },
     "_lrot": {
@@ -701,7 +701,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 205.363,
-      "height": 56.49999999999999
+      "height": 31.5
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -735,8 +735,8 @@
       "b": 29,
       "a": 255
     },
-    "_string": "坦克坦克坦克坦克坦克坦克",
-    "_horizontalAlign": 0,
+    "_string": "坦克坦坦克坦克",
+    "_horizontalAlign": 2,
     "_verticalAlign": 1,
     "_actualFontSize": 25,
     "_fontSize": 25,
@@ -1022,6 +1022,7 @@
       "__id__": 0
     },
     "fileId": "3cWbjtTSRJ7oRuoVJ3h9uh",
+    "instance": null,
     "targetOverrides": null
   }
 ]

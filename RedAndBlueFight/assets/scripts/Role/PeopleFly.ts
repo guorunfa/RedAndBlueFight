@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, CapsuleCollider, game, Collider, ICollisionEvent, physics, ParticleSystem } from 'cc';
+import { BulletPool } from '../Manager/BulletPool';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
@@ -6,7 +7,7 @@ import { Base } from './Base';
 
 const PeopleFlyMaxHp: number = 100;
 const PeopleFlyAtk: number = 40;
-const PeopleFlyAtkInterval: number = 3;
+const PeopleFlyAtkInterval: number = 1;
 const PeopleFlyAtkDistance: number = 30;
 const PeopleFlyMoveSpeed: number = 20;
 
@@ -106,12 +107,17 @@ export class PeopleFly {
             this.fireEf.play();
             if (target.isValid) {
                 target.emit("hit", this.atk);
-                if (!target.isValid || this.isDie) {
-                    this.currentTrigger = null;
-                    this.rigbody.linearDamping = 0;
-                    clearInterval(this.atkCall)
-                    return;
-                }
+                BulletPool.getInstance().shotBullet_0(this.fireEf.node.position, target.position, this.role.parent, () => {
+                    if (!target.isValid || this.isDie) {
+                        this.currentTrigger = null;
+                        this.rigbody.linearDamping = 0;
+                        clearInterval(this.atkCall)
+                        return;
+                    }
+                    if (target.name == "RedBase" || target.name == "BlueBase") {
+                        target.emit("hit", this.atk);
+                    }
+                });
             }
         }, this.atkInterval * 1000, this);
 

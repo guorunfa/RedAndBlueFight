@@ -8,6 +8,7 @@ import { PeopleShield } from '../Role/PeopleShield';
 import { Tank } from '../Role/Tank';
 import Tools from '../Tools';
 import { User } from '../User';
+import { BulletPool } from './BulletPool';
 import { EffectManager } from './EffectManager';
 import { InputManager } from './InputManager';
 import { PrefabManager } from './PrefabManager';
@@ -43,6 +44,9 @@ export class GameManager extends Component {
 
     @property(Node)
     effectParent: Node = null;
+
+    @property(Node)
+    bulletParent: Node = null;
 
 
     redTeam: {
@@ -93,6 +97,7 @@ export class GameManager extends Component {
             base: new Base(TEAM.BLUE, this.baseBlue),
             roles: []
         };
+        BulletPool.getInstance().initPool();
         this.effectParent.removeAllChildren();
         this.nameCount = 1;
         this.uiManager.changeUIState(GameState.INIT);
@@ -146,7 +151,7 @@ export class GameManager extends Component {
                 }
                 tips = {
                     name: name,
-                    msg: "召唤了枪兵",
+                    msg: "一组冲锋枪兵",
                     combo: ++user.gunCombo
                 }
                 this.uiManager.showTips(team, tips);
@@ -159,7 +164,7 @@ export class GameManager extends Component {
                 }
                 tips = {
                     name: name,
-                    msg: "召唤了rpg兵",
+                    msg: "一组rpg兵",
                     combo: ++user.rpgCombo
                 }
                 this.uiManager.showTips(team, tips);
@@ -172,20 +177,22 @@ export class GameManager extends Component {
                 }
                 tips = {
                     name: name,
-                    msg: "召唤了飞行兵",
+                    msg: "一组飞行兵",
                     combo: ++user.flyCombo
                 }
                 this.uiManager.showTips(team, tips);
                 break;
             case "4"://召唤一组护盾兵-red*5
-                break;
+                // break;
                 for (let i = 0; i < 5; i++) {
-                    let shield = new PeopleShield(team, parent, bornPos, enemyBase);
+                    let temp = Tools.getRandomNum(5, 10);
+                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
+                    let shield = new PeopleShield(team, parent, gunBornPos, enemyBase);
                     this.redTeam.roles.push(shield);
                 }
                 tips = {
                     name: name,
-                    msg: "召唤了护盾兵",
+                    msg: "一组护盾兵",
                     combo: ++user.shieldCombo
                 }
                 this.uiManager.showTips(team, tips);
@@ -196,7 +203,7 @@ export class GameManager extends Component {
 
                 tips = {
                     name: name,
-                    msg: "召唤了坦克",
+                    msg: "一辆坦克",
                     combo: ++user.tankCombo
                 }
                 this.uiManager.showTips(team, tips);
@@ -208,7 +215,7 @@ export class GameManager extends Component {
 
                 tips = {
                     name: name,
-                    msg: "召唤了飞机",
+                    msg: "一架飞机",
                     combo: ++user.airplaneCombo
                 }
                 this.uiManager.showTips(team, tips);
