@@ -798,13 +798,13 @@
   {
     "__type__": "cc.CurveRange",
     "mode": 0,
-    "constant": 0.3,
+    "constant": 0.5,
     "multiplier": 1
   },
   {
     "__type__": "cc.CurveRange",
     "mode": 0,
-    "constant": 0.1,
+    "constant": 0.5,
     "multiplier": 1
   },
   {
@@ -869,6 +869,7 @@
       "__id__": 0
     },
     "fileId": "b5pXlGcXNVs6qaCoBFco4m",
-    "instance": null
+    "instance": null,
+    "targetOverrides": null
   }
 ]
