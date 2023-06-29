@@ -1,0 +1,126 @@
+{
+  "ver": "2.3.2",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471",
+  "files": [],
+  "subMetas": {
+    "27074": {
+      "importer": "gltf-scene",
+      "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471@27074",
+      "displayName": "",
+      "id": "27074",
+      "name": "gun.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "10a81": {
+      "importer": "gltf-mesh",
+      "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471@10a81",
+      "displayName": "",
+      "id": "10a81",
+      "name": "Cylinder.006.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "48b02": {
+      "importer": "gltf-embeded-image",
+      "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471@48b02",
+      "displayName": "",
+      "id": "48b02",
+      "name": "base_color_texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": false,
+        "imageUuidOrDatabaseUri": "db://assets/res/tex/people_blue.png"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b4e6b": {
+      "importer": "gltf-material",
+      "uuid": "119567e0-fef3-4ca4-9e62-830d4c609471@b4e6b",
+      "displayName": "",
+      "id": "b4e6b",
+      "name": "Material.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "remap": "db://assets/res/tex/people_blue.png",
+        "uri": "119567e0-fef3-4ca4-9e62-830d4c609471@48b02"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "119567e0-fef3-4ca4-9e62-830d4c609471@27074",
+    "assetFinder": {
+      "meshes": [
+        "119567e0-fef3-4ca4-9e62-830d4c609471@10a81"
+      ],
+      "skeletons": [],
+      "textures": [
+        "119567e0-fef3-4ca4-9e62-830d4c609471@7d6ab"
+      ],
+      "materials": [
+        "119567e0-fef3-4ca4-9e62-830d4c609471@b4e6b"
+      ],
+      "scenes": [
+        "119567e0-fef3-4ca4-9e62-830d4c609471@27074"
+      ]
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "ver": "2.3.2",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702",
+  "files": [],
+  "subMetas": {
+    "e3d19": {
+      "importer": "gltf-mesh",
+      "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@e3d19",
+      "displayName": "",
+      "id": "e3d19",
+      "name": "Cylinder.047.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "48b02": {
+      "importer": "gltf-embeded-image",
+      "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@48b02",
+      "displayName": "",
+      "id": "48b02",
+      "name": "base_color_texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@48b02"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b4e6b": {
+      "importer": "gltf-material",
+      "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@b4e6b",
+      "displayName": "",
+      "id": "b4e6b",
+      "name": "Material.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a51c3": {
+      "importer": "gltf-scene",
+      "uuid": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@a51c3",
+      "displayName": "",
+      "id": "a51c3",
+      "name": "mushroom.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@48b02"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@a51c3",
+    "assetFinder": {
+      "meshes": [
+        "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@e3d19"
+      ],
+      "skeletons": [],
+      "textures": [
+        "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@7d6ab"
+      ],
+      "materials": [
+        "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@b4e6b"
+      ],
+      "scenes": [
+        "d8d17330-ed5c-44a2-b1e8-b40ebcaff702@a51c3"
+      ]
+    }
+  }
+}

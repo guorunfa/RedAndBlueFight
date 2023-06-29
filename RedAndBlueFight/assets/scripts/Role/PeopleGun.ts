@@ -1,6 +1,7 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game, ParticleSystem } from 'cc';
 import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
+import { GameData } from '../Manager/GameData';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
@@ -80,6 +81,10 @@ export class PeopleGun {
         }, 1000, this);
     }
 
+    moveToTarget(target: Node) {
+        console.log("向目标移动");
+    }
+
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
@@ -121,9 +126,10 @@ export class PeopleGun {
             })
             this.anim.play("gun_atk_idle");
             this.fireEf.play();
-            if (target.isValid) {
+            if (target.isValid && !this.isDie) {
                 target.emit("hit", this.atk);
-                BulletPool.getInstance().shotBullet_0(this.fireEf.node.position, target.position, this.role.parent, () => {
+                let startPos = Tools.convertToNodePos(this.role.parent, this.fireEf.node);
+                BulletPool.getInstance().shotBullet_0(startPos, target.position, this.role.parent, () => {
                     if (!target.isValid || this.isDie) {
                         this.currentTrigger = null;
                         this.rigbody.linearDamping = 0;
@@ -148,6 +154,7 @@ export class PeopleGun {
 
     die() {
         console.log("死亡:", this.role.name);
+        GameData.getInstance().removeRoleFromTeam(this, this.team);
         this.isDie = true;
         this.currentTrigger = null;
         if (this.role.isValid) {
@@ -156,6 +163,7 @@ export class PeopleGun {
             this.phyCollider.off("onTriggerStay");
             this.role.destroy();
         }
+
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

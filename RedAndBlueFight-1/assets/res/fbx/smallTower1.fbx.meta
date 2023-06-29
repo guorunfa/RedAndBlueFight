@@ -1,0 +1,125 @@
+{
+  "ver": "2.3.2",
+  "importer": "fbx",
+  "imported": true,
+  "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a",
+  "files": [],
+  "subMetas": {
+    "28ad5": {
+      "importer": "gltf-mesh",
+      "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@28ad5",
+      "displayName": "",
+      "id": "28ad5",
+      "name": "Cube.222.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "48b02": {
+      "importer": "gltf-embeded-image",
+      "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@48b02",
+      "displayName": "",
+      "id": "48b02",
+      "name": "base_color_texture.image",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.3",
+      "imported": true,
+      "files": [
+        ".json",
+        ".png"
+      ],
+      "subMetas": {}
+    },
+    "7d6ab": {
+      "importer": "texture",
+      "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@7d6ab",
+      "displayName": "",
+      "id": "7d6ab",
+      "name": "base_color_texture.texture",
+      "userData": {
+        "wrapModeS": "repeat",
+        "wrapModeT": "repeat",
+        "minfilter": "linear",
+        "magfilter": "linear",
+        "mipfilter": "none",
+        "anisotropy": 0,
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@48b02"
+      },
+      "ver": "1.0.22",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "b4e6b": {
+      "importer": "gltf-material",
+      "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@b4e6b",
+      "displayName": "",
+      "id": "b4e6b",
+      "name": "Material.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2cf39": {
+      "importer": "gltf-scene",
+      "uuid": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@2cf39",
+      "displayName": "",
+      "id": "2cf39",
+      "name": "smallTower1.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [
+      {
+        "name": "base_color_texture",
+        "uri": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@48b02"
+      }
+    ],
+    "fbx": {
+      "smartMaterialEnabled": true
+    },
+    "redirect": "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@2cf39",
+    "assetFinder": {
+      "meshes": [
+        "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@28ad5"
+      ],
+      "skeletons": [],
+      "textures": [
+        "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@7d6ab"
+      ],
+      "materials": [
+        "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@b4e6b"
+      ],
+      "scenes": [
+        "afd4f7ed-21c1-478d-92a3-8d8dcacb608a@2cf39"
+      ]
+    }
+  }
+}
