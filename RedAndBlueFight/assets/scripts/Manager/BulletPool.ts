@@ -66,7 +66,6 @@ export class BulletPool {
         bullet.setPosition(startPos);
         let len = Vec3.len(Vec3.subtract(new Vec3(), startPos, targetPos));
         let time = len / bulletSpeed_0;
-        console.log(startPos, targetPos);
         tween(bullet)
             .to(time, { position: targetPos })
             .call(() => {

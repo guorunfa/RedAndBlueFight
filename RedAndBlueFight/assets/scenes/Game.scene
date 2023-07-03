@@ -123287,7 +123287,7 @@
       "y": 0,
       "z": 0
     },
-    "_radius": 80,
+    "_radius": 100,
     "_id": "bfitjKJs1PkImfSFrt7aab"
   },
   {
@@ -124947,7 +124947,7 @@
       "y": 0,
       "z": 0
     },
-    "_radius": 80,
+    "_radius": 100,
     "_id": "5dz3ktABpJK6qQGFhkPsdV"
   },
   {
@@ -130944,7 +130944,10 @@
       "b": 124,
       "a": 255
     },
-    "_normalSprite": null,
+    "_normalSprite": {
+      "__uuid__": "a8af2ffd-4d27-4821-b32b-77628e6eec1c@f9941",
+      "__expectedType__": "cc.SpriteFrame"
+    },
     "_hoverSprite": null,
     "_pressedSprite": null,
     "_disabledSprite": null,

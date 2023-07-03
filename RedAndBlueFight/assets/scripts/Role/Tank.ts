@@ -1,14 +1,16 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, Collider, RigidBody, SphereCollider, ICollisionEvent, physics, ParticleSystem } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, Collider, RigidBody, SphereCollider, ICollisionEvent, physics, ParticleSystem, game } from 'cc';
 import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
+import { GameData } from '../Manager/GameData';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
 import { Base } from './Base';
+import { PeopleRpgAtk } from './PeopleRpg';
 
-const TankMaxHp: number = 1000;
-const TankAtk: number = 1;
-const TankAtkInterval: number = 2;
+const TankMaxHp: number = 3500;
+const TankAtk: number = 580;
+const TankAtkInterval: number = 5.8;
 const TankAtkDistance: number = 3;
 const TankMoveSpeed: number = 10;
 
@@ -57,6 +59,9 @@ export class Tank {
         this.isAtking = false;
         this.isDie = false;
         this.move();
+        game.on("over", () => {
+            this.die();
+        }, this);
     }
 
     moveInterval;
@@ -75,14 +80,25 @@ export class Tank {
                 clearInterval(this.moveInterval);
                 return;
             }
-            // this.anim.play("atk");
-            this.rigbody.setLinearVelocity(new Vec3(temp * TankMoveSpeed, 0, 0));
+            let enemyTeamInfo = this.team == TEAM.RED ? GameData.getInstance().blueTeam : GameData.getInstance().redTeam;
+            if (enemyTeamInfo.roles.length > 0) {
+                let enemyNodes: Node[] = [];
+                for (let role of enemyTeamInfo.roles) {
+                    enemyNodes.push(role.role);
+                }
+                let targetNode = Tools.findClosestNode(this.role, enemyNodes);
+                let dir = Vec3.normalize(new Vec3(), Vec3.subtract(new Vec3(), targetNode.position, this.role.position));
+                let linearVeloc = Vec3.multiplyScalar(new Vec3(), dir, TankMoveSpeed);
+                this.rigbody.setLinearVelocity(new Vec3(linearVeloc.x, 0, linearVeloc.z));
+            } else {
+                this.rigbody.setLinearVelocity(new Vec3(temp * TankMoveSpeed, 0, 0));
+            }
         }, 1000, this);
     }
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -99,9 +115,9 @@ export class Tank {
     }
 
     onBoom(event: ICollisionEvent) {
-        if (event.otherCollider.node.name == "boom_1") {
+        if (event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             console.log("被炸到了");
-            this.hit(this.maxHp / 5);
+            this.hit(PeopleRpgAtk);
         }
     }
 
@@ -115,9 +131,9 @@ export class Tank {
                 return;
             }
             this.fireEf.play();
-            if (target.isValid) {
+            if (target.isValid && !this.isDie) {
                 let pos = Tools.convertToNodePos(this.role.parent, this.fireEf.node);
-                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                let effectPos = new Vec3(target.position);
                 BulletPool.getInstance().shotBullet_1(pos, target.position, this.role.parent, () => {
                     EffectManager.playEfect(EffectType.BOOM_1, effectPos);
                     if (!target.isValid || this.isDie) {
@@ -147,6 +163,7 @@ export class Tank {
 
     die() {
         console.log("死亡:", this.role.name);
+        GameData.getInstance().removeRoleFromTeam(this, this.team);
         this.isDie = true;
         this.currentTrigger = null;
         if (this.role.isValid) {

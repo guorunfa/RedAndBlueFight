@@ -7,6 +7,7 @@ import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
 import { Base } from './Base';
 import { Bullet } from './Bullet';
+import { RoleManager } from './RoleManager';
 
 
 const PeopleGunMaxHp: number = 100;
@@ -32,10 +33,10 @@ export class PeopleGun extends Component {
     phyCollider: CapsuleCollider;
     enemyBase: Base;
     isAtking: boolean;
-    isDie: boolean;
 
     gameData: GameData;
     poolManager: PoolManager;
+    roleManager: RoleManager;
     moveInterval;
 
     onLoad() {
@@ -45,6 +46,7 @@ export class PeopleGun extends Component {
         this.atkInterval = PeopleGunAtkInterval;
         this.atkDistance = PeopleGunAtkDistance;
         this.poolManager = PoolManager.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
         this.gameData = GameData.getInstance();
         this.enemyBase = this.team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
         this.anim = this.node.getComponent(SkeletalAnimation);
@@ -57,9 +59,9 @@ export class PeopleGun extends Component {
     init() {
         this.hp = this.maxHp;
         this.isAtking = false;
-        this.isDie = false;
         this.moveInterval = null;
         this.currentTrigger = null;
+        this.roleManager._isDie = false;;
         this.node.on("hit", this.hit, this);
         this.trgCollider.on("onTriggerStay", this.onTriggerStay, this);
         this.trgCollider.on("onTriggerExit", this.onTriggerExit, this);
@@ -68,7 +70,7 @@ export class PeopleGun extends Component {
     }
 
     move() {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("gun移动");
@@ -78,7 +80,7 @@ export class PeopleGun extends Component {
             if (this.currentTrigger) {
                 return;
             }
-            if (this.isDie) {
+            if (this.roleManager._isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
@@ -120,8 +122,9 @@ export class PeopleGun extends Component {
 
     atkCall;
     doAtk(target: Node) {
+        let targetRoleManager = target.getComponent(RoleManager);
         this.atkCall = setInterval(() => {
-            if (!target.isValid || this.isDie) {
+            if (targetRoleManager._isDie || this.roleManager._isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
@@ -132,12 +135,12 @@ export class PeopleGun extends Component {
             })
             this.anim.play("gun_atk_idle");
             this.fireEf.play();
-            if (target.isValid && !this.isDie) {
+            if (!targetRoleManager._isDie && !this.roleManager._isDie) {
                 target.emit("hit", this.atk);
                 let startPos = Tools.convertToNodePos(this.node.parent, this.fireEf.node);
                 let bullet = this.poolManager.getFormPool(POOL_TYPE.BULLET);
                 bullet.getComponent(Bullet).shot(startPos, target.position, this.node.parent, () => {
-                    if (!target.isValid || this.isDie) {
+                    if (targetRoleManager._isDie || this.roleManager._isDie) {
                         this.currentTrigger = null;
                         this.rigbody.linearDamping = 0;
                         clearInterval(this.atkCall)
@@ -149,7 +152,7 @@ export class PeopleGun extends Component {
     }
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -161,16 +164,14 @@ export class PeopleGun extends Component {
 
     die() {
         console.log("死亡:", this.node.name);
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
-        if (this.node.isValid) {
-            this.trgCollider.off("onTriggerStay");
-            this.trgCollider.off("onTriggerExit");
-            this.phyCollider.off("onTriggerStay");
-            let poolType = this.team == TEAM.RED ? POOL_TYPE.GUN_RED : POOL_TYPE.GUN_BLUE;
-            this.poolManager.putToPool(poolType, this.node);
-            this.gameData.removeRoleFromTeam(this.node, this.team);
-        }
+        this.trgCollider.off("onTriggerStay");
+        this.trgCollider.off("onTriggerExit");
+        this.phyCollider.off("onTriggerStay");
+        let poolType = this.team == TEAM.RED ? POOL_TYPE.GUN_RED : POOL_TYPE.GUN_BLUE;
+        this.poolManager.putToPool(poolType, this.node);
+        this.gameData.removeRoleFromTeam(this.node, this.team);
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

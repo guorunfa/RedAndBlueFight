@@ -4457,7 +4457,7 @@
     "_linearFactor": {
       "__type__": "cc.Vec3",
       "x": 1,
-      "y": 1,
+      "y": 0,
       "z": 1
     },
     "_angularFactor": {
@@ -4495,7 +4495,7 @@
       "z": 0.3
     },
     "_radius": 1.557,
-    "_cylinderHeight": 2.998,
+    "_cylinderHeight": 7,
     "_direction": 1,
     "_id": ""
   },
@@ -4522,7 +4522,7 @@
       "y": 0,
       "z": 0
     },
-    "_radius": 30,
+    "_radius": 45,
     "_id": ""
   },
   {

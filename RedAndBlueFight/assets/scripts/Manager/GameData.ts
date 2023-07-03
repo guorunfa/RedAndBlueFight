@@ -40,24 +40,29 @@ export class GameData {
 
     removeRoleFromTeam(role: any, team: TEAM) {
         let roles = team == TEAM.RED ? this.redTeam.roles : this.blueTeam.roles;
-        console.log("当前角色数量：", roles.length);
         let index = roles.indexOf(role);
         if (index != -1) {
             roles.splice(index, 1);
         }
-        console.log("从队列中移除一个role：", roles.length);
     }
 
     gameOver() {
+        console.log('----------------', this.redTeam.roles, this.blueTeam.roles);
         if (this.redTeam && this.redTeam.roles.length > 0) {
-            for (let role of this.redTeam.roles) {
-                role.die();
+            for (let i = 0; i < this.redTeam.roles.length; i++) {
+                this.redTeam.roles[i].die();
+                console.log("red结束时死亡");
             }
+            // for (let role of this.redTeam.roles) {
+            //     role.die();
+            //     console.log("red结束时死亡");
+            // }
         }
 
         if (this.blueTeam && this.blueTeam.roles.length > 0) {
             for (let role of this.redTeam.roles) {
                 role.die();
+                console.log("blue结束时死亡");
             }
         }
     }

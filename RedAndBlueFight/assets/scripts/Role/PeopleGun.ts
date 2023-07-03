@@ -8,8 +8,8 @@ import Tools from '../Tools';
 import { Base } from './Base';
 
 
-const PeopleGunMaxHp: number = 100;
-const PeopleGunAtk: number = 40;
+const PeopleGunMaxHp: number = 120;
+const PeopleGunAtk: number = 17;
 const PeopleGunAtkInterval: number = 1;
 const PeopleGunAtkDistance: number = 30;
 const PeopleGunMoveSpeed: number = 25;
@@ -58,6 +58,9 @@ export class PeopleGun {
         this.isAtking = false;
         this.isDie = false;
         this.move();
+        game.on("over", () => {
+            this.die();
+        }, this);
     }
 
     moveInterval;
@@ -77,9 +80,23 @@ export class PeopleGun {
                 return;
             }
             this.anim.play("gun_move_speed");
-            this.rigbody.setLinearVelocity(new Vec3(temp * PeopleGunMoveSpeed, 0, 0));
+            let enemyTeamInfo = this.team == TEAM.RED ? GameData.getInstance().blueTeam : GameData.getInstance().redTeam;
+            if (enemyTeamInfo.roles.length > 0) {
+                let enemyNodes: Node[] = [];
+                for (let role of enemyTeamInfo.roles) {
+                    enemyNodes.push(role.role);
+                }
+                let targetNode = Tools.findClosestNode(this.role, enemyNodes);
+                let dir = Vec3.normalize(new Vec3(), Vec3.subtract(new Vec3(), targetNode.position, this.role.position));
+                let linearVeloc = Vec3.multiplyScalar(new Vec3(), dir, PeopleGunMoveSpeed);
+                this.rigbody.setLinearVelocity(new Vec3(linearVeloc.x, 0, linearVeloc.z));
+            } else {
+                this.rigbody.setLinearVelocity(new Vec3(temp * PeopleGunMoveSpeed, 0, 0));
+            }
         }, 1000, this);
     }
+
+
 
     moveToTarget(target: Node) {
         console.log("向目标移动");
@@ -88,7 +105,7 @@ export class PeopleGun {
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -105,7 +122,7 @@ export class PeopleGun {
     }
 
     onBoom(event: ICollisionEvent) {
-        if (event.otherCollider.node.name == "boom_1") {
+        if (event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             console.log("被炸到了");
             this.die();
         }

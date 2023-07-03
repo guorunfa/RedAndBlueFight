@@ -53,6 +53,7 @@ export class GameManager extends Component {
     uiManager: UIManager = null;
     inputBoxManager: InputManager = null;
     nameCount: number;
+    boomScale: Vec3[] = [new Vec3(180, 0, 100), new Vec3(-180, 0, -100)];
 
     onLoad() {
         PrefabManager.loadPrefabs();
@@ -65,7 +66,24 @@ export class GameManager extends Component {
     }
 
     gameOver() {
-        this.gameData.gameOver();
+        // if (this.gameData.redTeam && this.gameData.redTeam.roles.length > 0) {
+        //     console.log("结束-red:", this.gameData.redTeam.roles, this.gameData.redTeam.roles.length);
+        //     for (let i = 0; i < this.gameData.redTeam.roles.length; i++) {
+        //         this.gameData.redTeam.roles[i].die();
+        //         console.log("red结束时死亡:", i);
+        //     }
+        //     // for (let role of this.redTeam.roles) {
+        //     //     role.die();
+        //     //     console.log("red结束时死亡");
+        //     // }
+        // }
+
+        // if (this.gameData.blueTeam && this.gameData.blueTeam.roles.length > 0) {
+        //     for (let role of this.gameData.redTeam.roles) {
+        //         role.die();
+        //         console.log("blue结束时死亡");
+        //     }
+        // }
     }
 
     initGame() {
@@ -111,7 +129,8 @@ export class GameManager extends Component {
         let team = user.team;
         let bornPos = this.getBornPos(team);
         let parent = team == TEAM.RED ? this.redParent : this.blueParent;
-        let enemyBase = team == TEAM.RED ? this.gameData.redTeam.base : this.gameData.blueTeam.base;
+        let enemyBase = team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
+        let teamData = team == TEAM.RED ? this.gameData.redTeam : this.gameData.blueTeam;
         let tips: any;
         switch (call) {
             case "1"://召唤一组枪兵-red*5
@@ -119,7 +138,7 @@ export class GameManager extends Component {
                     let temp = Tools.getRandomNum(5, 10);
                     let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
                     let gun = new PeopleGun(team, parent, gunBornPos, enemyBase);
-                    this.gameData.redTeam.roles.push(gun);
+                    teamData.roles.push(gun);
 
                 }
                 tips = {
@@ -133,7 +152,7 @@ export class GameManager extends Component {
                 for (let i = 0; i < 3; i++) {
                     let rpgBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
                     let rpg = new PeopleRpg(team, parent, rpgBornPos, enemyBase);
-                    this.gameData.redTeam.roles.push(rpg);
+                    teamData.roles.push(rpg);
                 }
                 tips = {
                     name: name,
@@ -146,7 +165,7 @@ export class GameManager extends Component {
                 for (let i = 0; i < 3; i++) {
                     let flyBornPos = new Vec3(bornPos.x, 20, bornPos.z + -6 + i * 10);
                     let fly = new PeopleFly(team, parent, flyBornPos, enemyBase);
-                    this.gameData.redTeam.roles.push(fly);
+                    teamData.roles.push(fly);
                 }
                 tips = {
                     name: name,
@@ -161,7 +180,7 @@ export class GameManager extends Component {
                     let temp = Tools.getRandomNum(5, 10);
                     let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
                     let shield = new PeopleShield(team, parent, gunBornPos, enemyBase);
-                    this.gameData.redTeam.roles.push(shield);
+                    teamData.roles.push(shield);
                 }
                 tips = {
                     name: name,
@@ -172,7 +191,7 @@ export class GameManager extends Component {
                 break;
             case "5"://召唤一辆坦克-red*
                 let tank = new Tank(team, parent, bornPos, enemyBase);
-                this.gameData.redTeam.roles.push(tank);
+                teamData.roles.push(tank);
 
                 tips = {
                     name: name,
@@ -184,7 +203,7 @@ export class GameManager extends Component {
             case "6"://召唤一架直升飞机-red*1
                 let planePos = v3(bornPos.x, 30, bornPos.z);
                 let airplane = new Airplane(team, parent, planePos, enemyBase);
-                this.gameData.redTeam.roles.push(airplane);
+                teamData.roles.push(airplane);
 
                 tips = {
                     name: name,
@@ -194,6 +213,13 @@ export class GameManager extends Component {
                 this.uiManager.showTips(team, tips);
                 break;
             case "7"://召唤战场轰炸-red*1
+                EffectManager.playBoom_plane(this.boomScale, team);
+                tips = {
+                    name: name,
+                    msg: "战场轰炸",
+                    combo: ++user.airplaneCombo
+                }
+                this.uiManager.showTips(team, tips);
                 break;
             case "8"://基地+护盾-red*25s
                 break;

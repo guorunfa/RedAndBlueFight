@@ -5,6 +5,7 @@ import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
 import { GameData } from '../Manager/GameData';
 import { Bullet } from './Bullet';
+import { RoleManager } from './RoleManager';
 
 
 const PeopleFlyMaxHp: number = 100;
@@ -30,10 +31,10 @@ export class PeopleFly extends Component {
     fireEf: ParticleSystem;
     enemyBase: Node;
     isAtking: boolean;
-    isDie: boolean;
 
     gameData: GameData;
     poolManager: PoolManager;
+    roleManager: RoleManager;
     moveInterval;
 
     onLoad() {
@@ -49,12 +50,13 @@ export class PeopleFly extends Component {
         this.rigbody = this.node.getComponent(RigidBody);
         this.trgCollider = this.node.getComponent(SphereCollider);
         this.poolManager = PoolManager.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
     }
 
     init() {
         this.hp = this.maxHp;
         this.isAtking = false;
-        this.isDie = false;
+        this.roleManager._isDie = false;
         this.moveInterval = null;
         this.currentTrigger = null;
         this.node.on("hit", this.hit, this);
@@ -63,7 +65,7 @@ export class PeopleFly extends Component {
     }
 
     move() {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("fly移动");
@@ -74,7 +76,7 @@ export class PeopleFly extends Component {
             if (this.currentTrigger) {
                 return;
             }
-            if (this.isDie) {
+            if (this.roleManager._isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
@@ -105,18 +107,19 @@ export class PeopleFly extends Component {
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
-            if (!target.isValid) {
+            let targetRoleManager = target.getComponent(RoleManager);
+            if (targetRoleManager._isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
             this.fireEf.play();
-            if (target.isValid) {
+            if (!targetRoleManager._isDie) {
                 target.emit("hit", this.atk);
                 let bullet = this.poolManager.getFormPool(POOL_TYPE.BULLET);
                 bullet.getComponent(Bullet).shot(this.fireEf.node.position, target.position, this.node.parent, () => {
-                    if (!target.isValid || this.isDie) {
+                    if (targetRoleManager._isDie || this.roleManager._isDie) {
                         this.currentTrigger = null;
                         this.rigbody.linearDamping = 0;
                         clearInterval(this.atkCall)
@@ -132,7 +135,7 @@ export class PeopleFly extends Component {
     }
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -144,15 +147,13 @@ export class PeopleFly extends Component {
 
     die() {
         console.log("死亡:", this.node.name);
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
-        if (this.node.isValid) {
-            this.trgCollider.off("onTriggerStay");
-            this.trgCollider.off("onTriggerExit");
-            let poolType = this.team == TEAM.RED ? POOL_TYPE.FLY_RED : POOL_TYPE.FLY_BLUE;
-            this.poolManager.putToPool(poolType, this.node);
-            this.gameData.removeRoleFromTeam(this.node, this.team);
-        }
+        this.trgCollider.off("onTriggerStay");
+        this.trgCollider.off("onTriggerExit");
+        let poolType = this.team == TEAM.RED ? POOL_TYPE.FLY_RED : POOL_TYPE.FLY_BLUE;
+        this.poolManager.putToPool(poolType, this.node);
+        this.gameData.removeRoleFromTeam(this.node, this.team);
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

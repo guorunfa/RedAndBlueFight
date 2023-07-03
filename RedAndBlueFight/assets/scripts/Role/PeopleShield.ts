@@ -1,14 +1,15 @@
-import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, CapsuleCollider, Collider, physics, ICollisionEvent } from 'cc';
+import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, RigidBody, SphereCollider, CapsuleCollider, Collider, physics, ICollisionEvent, game } from 'cc';
 import { BulletPool } from '../Manager/BulletPool';
+import { GameData } from '../Manager/GameData';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
 import { Base } from './Base';
 
 
-const PeopleShieldMaxHp: number = 100;
-const PeopleShieldAtk: number = 40;
-const PeopleShieldAtkInterval: number = 3;
+const PeopleShieldMaxHp: number = 270;
+const PeopleShieldAtk: number = 31;
+const PeopleShieldAtkInterval: number = 1.25;
 const PeopleShieldAtkDistance: number = 3;
 const PeopleShieldMoveSpeed: number = 15;
 
@@ -54,6 +55,9 @@ export class PeopleShield {
         this.isAtking = false;
         this.isDie = false;
         this.move();
+        game.on("over", () => {
+            this.die();
+        }, this);
     }
 
     moveInterval;
@@ -73,18 +77,29 @@ export class PeopleShield {
                 return;
             }
             this.anim.play("shield_move");
-            this.rigbody.setLinearVelocity(new Vec3(temp * PeopleShieldMoveSpeed, 0, 0));
+            let enemyTeamInfo = this.team == TEAM.RED ? GameData.getInstance().blueTeam : GameData.getInstance().redTeam;
+            if (enemyTeamInfo.roles.length > 0) {
+                let enemyNodes: Node[] = [];
+                for (let role of enemyTeamInfo.roles) {
+                    enemyNodes.push(role.role);
+                }
+                let targetNode = Tools.findClosestNode(this.role, enemyNodes);
+                let dir = Vec3.normalize(new Vec3(), Vec3.subtract(new Vec3(), targetNode.position, this.role.position));
+                let linearVeloc = Vec3.multiplyScalar(new Vec3(), dir, PeopleShieldMoveSpeed);
+                this.rigbody.setLinearVelocity(new Vec3(linearVeloc.x, 0, linearVeloc.z));
+            } else {
+                this.rigbody.setLinearVelocity(new Vec3(temp * PeopleShieldMoveSpeed, 0, 0));
+            }
         }, 1000, this);
     }
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             return;
         }
         this.currentTrigger = event.otherCollider;
         this.rigbody.linearDamping = 1;
-        // this.anim.play("shield_atk");
         this.anim.stop();
         this.doAtk(event.otherCollider.node);
     }
@@ -97,7 +112,7 @@ export class PeopleShield {
     }
 
     onBoom(event: ICollisionEvent) {
-        if (event.otherCollider.node.name == "boom_1") {
+        if (event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             console.log("被炸到了");
             this.die();
         }
@@ -114,18 +129,18 @@ export class PeopleShield {
             }
             this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
                 this.anim.stop();
-                if (target.isValid) {
-                    target.emit("hit", this.atk);
+            })
+            if (target.isValid && !this.isDie) {
+                if (target.name != "RedBase" && target.name != "BlueBase") {
+                    this.anim.play("shield_atk");
                 }
+                target.emit("hit", this.atk);
                 if (!target.isValid || this.isDie) {
                     this.currentTrigger = null;
                     this.rigbody.linearDamping = 0;
                     clearInterval(this.atkCall)
                     return;
                 }
-            })
-            if (target.name != "RedBase" && target.name != "BlueBase") {
-                this.anim.play("shield_atk");
             }
         }, this.atkInterval * 1000, this);
     }
@@ -143,6 +158,7 @@ export class PeopleShield {
 
     die() {
         console.log("死亡:", this.role.name);
+        GameData.getInstance().removeRoleFromTeam(this, this.team);
         this.isDie = true;
         this.currentTrigger = null;
         if (this.role.isValid) {

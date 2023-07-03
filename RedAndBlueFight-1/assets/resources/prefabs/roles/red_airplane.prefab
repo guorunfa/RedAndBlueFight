@@ -43,10 +43,13 @@
       },
       {
         "__id__": 38
+      },
+      {
+        "__id__": 40
       }
     ],
     "_prefab": {
-      "__id__": 40
+      "__id__": 42
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -697,6 +700,23 @@
     "fileId": "49Z9fnUNJKQ7sj3v8T44YS"
   },
   {
+    "__type__": "c5284v6FHlJ564XYp4oFpur",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 41
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "56P8xF1KJPnZel1XdLJUz4"
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -708,7 +728,7 @@
     "instance": null,
     "targetOverrides": [
       {
-        "__id__": 41
+        "__id__": 43
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -726,7 +746,7 @@
       "__id__": 21
     },
     "sourceInfo": {
-      "__id__": 42
+      "__id__": 44
     },
     "propertyPath": [
       "_trailModule",
@@ -736,7 +756,7 @@
       "__id__": 21
     },
     "targetInfo": {
-      "__id__": 43
+      "__id__": 45
     }
   },
   {

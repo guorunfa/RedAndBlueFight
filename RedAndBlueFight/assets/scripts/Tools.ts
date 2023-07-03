@@ -78,19 +78,18 @@ export default class Tools {
         return (Math.round(min) + Math.round(rand * range));
     }
 
+    static getRandomNumContact(min: number, max: number) {
+        let range = Math.abs(max - min) + 1;
+        let random = Math.floor(Math.random() * range) + Math.min(min, max);
+        return random;
+    }
+
     // 去除字符串中的所有空格
     static trim2(str: string) {
         const reg = /\s+/g;
         return str.replace(reg, '');
     }
 
-    static getRangeRandom(min, max, range, count) {
-        let randoms = [];
-
-        for (let i = 0; i < count; i++) {
-
-        }
-    }
 
     static splitGroup(list, count) {
         if (list.length < 0 || list.length < count) {
@@ -122,5 +121,24 @@ export default class Tools {
         Mat4.invert(tempMat4, nodeA.getWorldMatrix());
         Vec3.transformMat4(tempPos, nodeB.worldPosition, tempMat4);
         return tempPos;
+    }
+
+    //找到距离目标节点最近的节点
+    static findClosestNode(targetNode: Node, nodeArray: Node[]) {
+        if (nodeArray.length === 0) {
+            return null;
+        }
+        let minDistance = Vec3.subtract(new Vec3(), targetNode.position, nodeArray[0].position).length();
+        let closestNode = nodeArray[0];
+
+        for (let i = 1; i < nodeArray.length; i++) {
+            let distance = Vec3.subtract(new Vec3(), targetNode.position, nodeArray[i].position).length();
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestNode = nodeArray[i];
+            }
+        }
+
+        return closestNode;
     }
 }

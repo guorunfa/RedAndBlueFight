@@ -6,6 +6,7 @@ import { PrefabManager } from '../Manager/PrefabManager';
 import { Base } from './Base';
 import { GameData } from '../Manager/GameData';
 import { Cannon } from './Cannon';
+import { RoleManager } from './RoleManager';
 
 
 const PeopleRpgMaxHp: number = 100;
@@ -31,11 +32,11 @@ export class PeopleRpg extends Component {
     phyCollider: CapsuleCollider;
     enemyBase: Base;
     isAtking: boolean;
-    isDie: boolean;
 
     gameData: GameData;
     poolManager: PoolManager;
     effectManager: EffectManager;
+    roleManager: RoleManager;
     moveInterval;
 
     onLoad() {
@@ -49,6 +50,7 @@ export class PeopleRpg extends Component {
         this.poolManager = PoolManager.getInstance();
         this.effectManager = EffectManager.getInstance();
         this.gameData = GameData.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
         this.enemyBase = this.team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
         this.anim = this.node.getComponent(SkeletalAnimation);
         this.rigbody = this.node.getComponent(RigidBody);
@@ -60,7 +62,7 @@ export class PeopleRpg extends Component {
     init() {
         this.hp = this.maxHp;
         this.isAtking = false;
-        this.isDie = false;
+        this.roleManager._isDie = false;
         this.moveInterval = null;
         this.currentTrigger = null;
         this.node.on("hit", this.hit, this);
@@ -77,7 +79,7 @@ export class PeopleRpg extends Component {
             if (this.currentTrigger) {
                 return;
             }
-            if (this.isDie) {
+            if (this.roleManager._isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
@@ -114,9 +116,10 @@ export class PeopleRpg extends Component {
 
     atkCall;
     doAtk(target: Node) {
+        let targetRoleManager = target.getComponent(RoleManager);
         this.atkCall = setInterval(() => {
             console.log("currentTrigger-------------------", this.currentTrigger.node);
-            if (!target.isValid || this.isDie) {
+            if (targetRoleManager._isDie || this.roleManager._isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
@@ -126,13 +129,13 @@ export class PeopleRpg extends Component {
                 this.anim.stop();
             })
             this.anim.play("rpg_atk");
-            if (target.isValid) {
+            if (!targetRoleManager._isDie) {
                 let pos = this.node.position;
                 let effectPos = new Vec3(target.position.x, 0, target.position.z);
                 let cannon = this.poolManager.getFormPool(POOL_TYPE.CANNON);
                 cannon.getComponent(Cannon).shot(pos, target.position, this.node.parent, () => {
                     this.effectManager.playEfect(EffectType.BOOM_1, effectPos);
-                    if (!target.isValid || this.isDie) {
+                    if (targetRoleManager._isDie || this.roleManager._isDie) {
                         this.currentTrigger = null;
                         this.rigbody.linearDamping = 0;
                         clearInterval(this.atkCall)
@@ -147,7 +150,7 @@ export class PeopleRpg extends Component {
     }
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -159,16 +162,14 @@ export class PeopleRpg extends Component {
 
     die() {
         console.log("死亡:", this.node.name);
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
-        if (this.node.isValid) {
-            this.trgCollider.off("onTriggerStay");
-            this.trgCollider.off("onTriggerExit");
-            this.phyCollider.off("onTriggerStay");
-            let poolType = this.team == TEAM.RED ? POOL_TYPE.RPG_RED : POOL_TYPE.RPG_BLUE;
-            this.poolManager.putToPool(poolType, this.node);
-            this.gameData.removeRoleFromTeam(this.node, this.team);
-        }
+        this.trgCollider.off("onTriggerStay");
+        this.trgCollider.off("onTriggerExit");
+        this.phyCollider.off("onTriggerStay");
+        let poolType = this.team == TEAM.RED ? POOL_TYPE.RPG_RED : POOL_TYPE.RPG_BLUE;
+        this.poolManager.putToPool(poolType, this.node);
+        this.gameData.removeRoleFromTeam(this.node, this.team);
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

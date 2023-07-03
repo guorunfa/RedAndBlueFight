@@ -7,6 +7,7 @@ import Tools from '../Tools';
 import { Base } from './Base';
 import { GameData } from '../Manager/GameData';
 import { Bullet } from './Bullet';
+import { RoleManager } from './RoleManager';
 
 
 const AirplaneMaxHp: number = 100;
@@ -32,10 +33,10 @@ export class Plane extends Component {
     trgCollider: SphereCollider;
     enemyBase: Base;
     isAtking: boolean;
-    isDie: boolean;
 
     gameData: GameData;
     poolManager: PoolManager;
+    roleManager: RoleManager;
     moveInterval;
 
     onLoad() {
@@ -46,6 +47,7 @@ export class Plane extends Component {
         this.atkDistance = AirplaneAtkDistance;
         this.gameData = GameData.getInstance();
         this.poolManager = PoolManager.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
         this.enemyBase = this.team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
         this.anim = this.node.getComponent(SkeletalAnimation);
         this.rigbody = this.node.getComponent(RigidBody);
@@ -56,7 +58,7 @@ export class Plane extends Component {
     init() {
         this.hp = this.maxHp;
         this.isAtking = false;
-        this.isDie = false;
+        this.roleManager._isDie = false;
         this.moveInterval = null;
         this.currentTrigger = null;
         this.node.on("hit", this.hit, this);
@@ -73,7 +75,7 @@ export class Plane extends Component {
             if (this.currentTrigger) {
                 return;
             }
-            if (this.isDie) {
+            if (this.roleManager._isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
@@ -101,20 +103,21 @@ export class Plane extends Component {
 
     atkCall;
     doAtk(target: Node) {
+        let targetRoleManager = target.getComponent(RoleManager);
         this.atkCall = setInterval(() => {
-            if (!target.isValid || this.isDie) {
+            if (targetRoleManager._isDie || this.roleManager._isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
                 return;
             }
             this.fireEf.play();
-            if (target.isValid) {
+            if (!targetRoleManager._isDie) {
                 target.emit("hit", this.atk);
                 let pos = Tools.convertToNodePos(this.node.parent, this.fireEf.node);
                 let bullet = this.poolManager.getFormPool(POOL_TYPE.BULLET);
                 bullet.getComponent(Bullet).shot(pos, target.position, this.node.parent, () => {
-                    if (!target.isValid || this.isDie) {
+                    if (targetRoleManager._isDie || this.roleManager._isDie) {
                         this.currentTrigger = null;
                         this.rigbody.linearDamping = 0;
                         clearInterval(this.atkCall)
@@ -129,7 +132,7 @@ export class Plane extends Component {
     }
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -141,15 +144,13 @@ export class Plane extends Component {
 
     die() {
         console.log("死亡:", this.node.name);
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
-        if (this.node.isValid) {
-            this.trgCollider.off("onTriggerStay");
-            this.trgCollider.off("onTriggerExit");
-            let poolType = this.team == TEAM.RED ? POOL_TYPE.PLANE_RED : POOL_TYPE.PLANE_BLUE;
-            this.poolManager.putToPool(poolType, this.node);
-            this.gameData.removeRoleFromTeam(this.node, this.team);
-        }
+        this.trgCollider.off("onTriggerStay");
+        this.trgCollider.off("onTriggerExit");
+        let poolType = this.team == TEAM.RED ? POOL_TYPE.PLANE_RED : POOL_TYPE.PLANE_BLUE;
+        this.poolManager.putToPool(poolType, this.node);
+        this.gameData.removeRoleFromTeam(this.node, this.team);
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

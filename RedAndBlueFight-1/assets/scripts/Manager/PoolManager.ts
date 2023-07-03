@@ -234,7 +234,6 @@ export class PoolManager {
         } else {
             console.log("对象池不存在，获取对象失败");
         }
-        console.log(obj);
         return obj;
     }
 

@@ -24,15 +24,18 @@
       },
       {
         "__id__": 58
+      },
+      {
+        "__id__": 60
       }
     ],
     "_prefab": {
-      "__id__": 60
+      "__id__": 62
     },
     "_lpos": {
       "__type__": "cc.Vec3",
       "x": 24.776,
-      "y": 7.618,
+      "y": 0,
       "z": 9.661
     },
     "_lrot": {
@@ -44,9 +47,9 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
-      "z": 1
+      "x": 2,
+      "y": 2,
+      "z": 2
     },
     "_mobility": 0,
     "_layer": 4,
@@ -819,8 +822,8 @@
     },
     "_size": {
       "__type__": "cc.Vec3",
-      "x": 13.331,
-      "y": 11,
+      "x": 16.066,
+      "y": 20,
       "z": 12.82
     },
     "_id": ""
@@ -828,6 +831,42 @@
   {
     "__type__": "cc.CompPrefabInfo",
     "fileId": "e2CatjT8xBL4Yi279npP3c"
+  },
+  {
+    "__type__": "cc.RigidBody",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 61
+    },
+    "_group": 128,
+    "_type": 1,
+    "_mass": 1,
+    "_allowSleep": true,
+    "_linearDamping": 0.1,
+    "_angularDamping": 0.1,
+    "_useGravity": false,
+    "_linearFactor": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_angularFactor": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "8dntVon89FnZUm6hc4CxJW"
   },
   {
     "__type__": "cc.PrefabInfo",

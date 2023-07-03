@@ -5,10 +5,10 @@ import { TEAM } from '../Manager/GameManager';
 import Tools from '../Tools';
 
 
-export const BaseMaxHp: number = 10000;
+export const BaseMaxHp: number = 48000;
 export const BaseShieldTime: number = 25;
-const atk: number = 100;
-const atkInterval: number = 2;
+const atk: number = 290;
+const atkInterval: number = 8;
 
 export class Base {
 
@@ -70,9 +70,8 @@ export class Base {
             let fire = math.random() > 0.5 ? this.leftFire : this.rightFire;
             fire.play();
             if (target.isValid) {
-                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                let effectPos = new Vec3(target.position);
                 let startPos = Tools.convertToNodePos(this.role.parent, fire.node);
-                console.log("base--------------", startPos, target.position);
                 BulletPool.getInstance().shotBullet_1(startPos, target.position, this.role.parent, () => {
                     EffectManager.playEfect(EffectType.BOOM_1, effectPos);
                     if (!target.isValid || this.isDie) {
@@ -115,8 +114,5 @@ export class Base {
         clearInterval(this.atkCall);
         game.emit("over");
     }
-
-
-
 }
 

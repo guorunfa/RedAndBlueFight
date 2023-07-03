@@ -40,10 +40,13 @@
       },
       {
         "__id__": 37
+      },
+      {
+        "__id__": 39
       }
     ],
     "_prefab": {
-      "__id__": 39
+      "__id__": 41
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -674,7 +677,7 @@
     "_linearFactor": {
       "__type__": "cc.Vec3",
       "x": 1,
-      "y": 1,
+      "y": 0,
       "z": 1
     },
     "_angularFactor": {
@@ -690,6 +693,37 @@
     "fileId": "4cBb2IdRdMLplnHbUBMrPs"
   },
   {
+    "__type__": "cc.CapsuleCollider",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 1
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 40
+    },
+    "_material": {
+      "__uuid__": "e4250632-d016-4f03-9c72-2ab3c6a873e5",
+      "__expectedType__": "cc.PhysicsMaterial"
+    },
+    "_isTrigger": false,
+    "_center": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 4.5,
+      "z": 0.3
+    },
+    "_radius": 5.485,
+    "_cylinderHeight": 5.97,
+    "_direction": 1,
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "d3qnYP3BtA8L/q82eIalmV"
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -701,7 +735,7 @@
     "instance": null,
     "targetOverrides": [
       {
-        "__id__": 40
+        "__id__": 42
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -719,7 +753,7 @@
       "__id__": 21
     },
     "sourceInfo": {
-      "__id__": 41
+      "__id__": 43
     },
     "propertyPath": [
       "_trailModule",
@@ -729,7 +763,7 @@
       "__id__": 21
     },
     "targetInfo": {
-      "__id__": 42
+      "__id__": 44
     }
   },
   {

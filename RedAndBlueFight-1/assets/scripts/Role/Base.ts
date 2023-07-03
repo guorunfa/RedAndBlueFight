@@ -4,6 +4,7 @@ import { EffectManager, EffectType } from '../Manager/EffectManager';
 import { TEAM } from '../Manager/GameManager';
 import Tools from '../Tools';
 import { Cannon } from './Cannon';
+import { RoleManager } from './RoleManager';
 
 
 export const BaseMaxHp: number = 10000;
@@ -19,7 +20,6 @@ export class Base extends Component {
     team: TEAM;
     maxHp: number;
     hp: number;
-    isDie: boolean;
     atk: number;
 
     atkTrigger: SphereCollider;
@@ -32,6 +32,7 @@ export class Base extends Component {
 
     poolManager: PoolManager;
     effectManager: EffectManager;
+    roleManager: RoleManager;
 
     onLoad() {
         this.team = this.node.name == "Redbase" ? TEAM.RED : TEAM.BLUE;
@@ -39,6 +40,7 @@ export class Base extends Component {
         this.atk = atk;
         this.poolManager = PoolManager.getInstance();
         this.effectManager = EffectManager.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
         this.leftFire = this.node.getChildByName("LeftFire").getComponent(ParticleSystem);
         this.rightFire = this.node.getChildByName("RightFire").getComponent(ParticleSystem);
         this.atkTrigger = this.node.getComponent(SphereCollider);
@@ -49,7 +51,7 @@ export class Base extends Component {
     init() {
         this.hp = this.maxHp;
         this.shieldCountTime = 0;
-        this.isDie = false;
+        this.roleManager._isDie = false;
         this.currentTrigger = null;
         this.atkCall = null;
         this.node.on("hit", this.hit, this);
@@ -74,22 +76,23 @@ export class Base extends Component {
     }
 
     doAtk(target: Node) {
+        let targetRoleManager = target.getComponent(RoleManager);
         this.atkCall = setInterval(() => {
-            if (!target.isValid || this.isDie) {
+            if (targetRoleManager._isDie || this.roleManager._isDie) {
                 this.currentTrigger = null;
                 clearInterval(this.atkCall)
                 return;
             }
             let fire = math.random() > 0.5 ? this.leftFire : this.rightFire;
             fire.play();
-            if (target.isValid) {
+            if (!targetRoleManager._isDie) {
                 let effectPos = new Vec3(target.position.x, 0, target.position.z);
                 let startPos = Tools.convertToNodePos(this.node.parent, fire.node);
                 console.log("base--------------", startPos, target.position);
                 let cannon: Node = this.poolManager.getFormPool(POOL_TYPE.CANNON);
                 cannon.getComponent(Cannon).shot(startPos, target.position, this.node.parent, () => {
                     this.effectManager.playEfect(EffectType.BOOM_1, effectPos);
-                    if (!target.isValid || this.isDie) {
+                    if (targetRoleManager._isDie || this.roleManager._isDie) {
                         this.currentTrigger = null;
                         clearInterval(this.atkCall)
                         return;
@@ -101,7 +104,7 @@ export class Base extends Component {
 
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -120,7 +123,7 @@ export class Base extends Component {
     }
 
     baseDie() {
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
         this.atkTrigger.off("onTriggerStay");
         this.atkTrigger.off("onTriggerExit");

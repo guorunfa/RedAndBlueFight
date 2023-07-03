@@ -3900,6 +3900,8 @@
       "__id__": 0
     },
     "fileId": "78nVpZVSZCNZfAHkcFGdT/",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -4205,7 +4207,7 @@
       "z": 0.3
     },
     "_radius": 1.557,
-    "_cylinderHeight": 2.998,
+    "_cylinderHeight": 7,
     "_direction": 1,
     "_id": ""
   },

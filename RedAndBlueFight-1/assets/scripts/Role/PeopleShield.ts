@@ -5,6 +5,7 @@ import { PrefabManager } from '../Manager/PrefabManager';
 import Tools from '../Tools';
 import { Base } from './Base';
 import { GameData } from '../Manager/GameData';
+import { RoleManager } from './RoleManager';
 
 
 const PeopleShieldMaxHp: number = 100;
@@ -30,10 +31,10 @@ export class PeopleShield extends Component {
     phyCollider: CapsuleCollider;
     enemyBase: Base;
     isAtking: boolean;
-    isDie: boolean;
 
     gameData: GameData;
     poolManager: PoolManager;
+    roleManager: RoleManager;
     moveInterval;
 
     onLoad() {
@@ -44,6 +45,7 @@ export class PeopleShield extends Component {
         this.atkDistance = PeopleShieldAtkDistance;
         this.poolManager = PoolManager.getInstance();
         this.gameData = GameData.getInstance();
+        this.roleManager = this.getComponent(RoleManager);
         this.enemyBase = this.team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
         this.anim = this.node.getComponent(SkeletalAnimation);
         this.rigbody = this.node.getComponent(RigidBody);
@@ -54,7 +56,7 @@ export class PeopleShield extends Component {
     init() {
         this.hp = this.maxHp;
         this.isAtking = false;
-        this.isDie = false;
+        this.roleManager._isDie = false;
         this.moveInterval = null;
         this.currentTrigger = null;
         this.node.on("hit", this.hit, this);
@@ -64,7 +66,7 @@ export class PeopleShield extends Component {
     }
 
     move() {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("shield移动");
@@ -74,7 +76,7 @@ export class PeopleShield extends Component {
             if (this.currentTrigger) {
                 return;
             }
-            if (this.isDie) {
+            if (this.roleManager._isDie) {
                 clearInterval(this.moveInterval);
                 return;
             }
@@ -111,8 +113,9 @@ export class PeopleShield extends Component {
 
     atkCall;
     doAtk(target: Node) {
+        let targetRoleManager = target.getComponent(RoleManager);
         this.atkCall = setInterval(() => {
-            if (!target.isValid || this.isDie) {
+            if (targetRoleManager._isDie || this.roleManager._isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
                 clearInterval(this.atkCall)
@@ -120,10 +123,10 @@ export class PeopleShield extends Component {
             }
             this.anim.once(SkeletalAnimation.EventType.FINISHED, () => {
                 this.anim.stop();
-                if (target.isValid) {
+                if (!targetRoleManager._isDie) {
                     target.emit("hit", this.atk);
                 }
-                if (!target.isValid || this.isDie) {
+                if (targetRoleManager._isDie || this.roleManager._isDie) {
                     this.currentTrigger = null;
                     this.rigbody.linearDamping = 0;
                     clearInterval(this.atkCall)
@@ -137,7 +140,7 @@ export class PeopleShield extends Component {
     }
 
     hit(atkValue: number) {
-        if (this.isDie) {
+        if (this.roleManager._isDie) {
             return;
         }
         console.log("受到攻击");
@@ -149,16 +152,14 @@ export class PeopleShield extends Component {
 
     die() {
         console.log("死亡:", this.node.name);
-        this.isDie = true;
+        this.roleManager._isDie = true;
         this.currentTrigger = null;
-        if (this.node.isValid) {
-            this.trgCollider.off("onTriggerStay");
-            this.trgCollider.off("onTriggerExit");
-            this.phyCollider.off("onTriggerStay");
-            let poolType = this.team == TEAM.RED ? POOL_TYPE.SHIELD_RED : POOL_TYPE.SHIELD_BLUE;
-            this.poolManager.putToPool(poolType, this.node);
-            this.gameData.removeRoleFromTeam(this.node, this.team);
-        }
+        this.trgCollider.off("onTriggerStay");
+        this.trgCollider.off("onTriggerExit");
+        this.phyCollider.off("onTriggerStay");
+        let poolType = this.team == TEAM.RED ? POOL_TYPE.SHIELD_RED : POOL_TYPE.SHIELD_BLUE;
+        this.poolManager.putToPool(poolType, this.node);
+        this.gameData.removeRoleFromTeam(this.node, this.team);
         clearInterval(this.atkCall);
         clearInterval(this.moveInterval);
     }

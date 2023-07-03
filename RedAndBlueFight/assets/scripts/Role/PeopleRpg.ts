@@ -1,14 +1,16 @@
 import { _decorator, Component, Node, instantiate, CCObject, Vec3, animation, SkeletalAnimation, BoxCollider, ITriggerEvent, v3, tween, Tween, CylinderCollider, RigidBody, ICollisionEvent, CapsuleCollider, Collider, SphereCollider, physics, game, Layers } from 'cc';
 import { BulletPool } from '../Manager/BulletPool';
 import { EffectManager, EffectType } from '../Manager/EffectManager';
+import { GameData } from '../Manager/GameData';
 import { TEAM } from '../Manager/GameManager';
 import { PrefabManager } from '../Manager/PrefabManager';
+import Tools from '../Tools';
 import { Base } from './Base';
 
 
-const PeopleRpgMaxHp: number = 100;
-const PeopleRpgAtk: number = 40;
-const PeopleRpgAtkInterval: number = 2;
+const PeopleRpgMaxHp: number = 120;
+export const PeopleRpgAtk: number = 290;
+const PeopleRpgAtkInterval: number = 4;
 const PeopleRpgAtkDistance: number = 30;
 const PeopleRpgMoveSpeed: number = 20;
 
@@ -54,10 +56,16 @@ export class PeopleRpg {
         this.isAtking = false;
         this.isDie = false;
         this.move();
+        game.on("over", () => {
+            this.die();
+        }, this);
     }
 
     moveInterval;
     move() {
+        if (this.isDie) {
+            return;
+        }
         console.log("Rpg移动");
         let temp = this.team == TEAM.RED ? 1 : -1;
         this.rigbody.linearDamping = 0;
@@ -70,13 +78,25 @@ export class PeopleRpg {
                 return;
             }
             this.anim.play("rpg_move");
-            this.rigbody.setLinearVelocity(new Vec3(temp * PeopleRpgMoveSpeed, 0, 0));
+            let enemyTeamInfo = this.team == TEAM.RED ? GameData.getInstance().blueTeam : GameData.getInstance().redTeam;
+            if (enemyTeamInfo.roles.length > 0) {
+                let enemyNodes: Node[] = [];
+                for (let role of enemyTeamInfo.roles) {
+                    enemyNodes.push(role.role);
+                }
+                let targetNode = Tools.findClosestNode(this.role, enemyNodes);
+                let dir = Vec3.normalize(new Vec3(), Vec3.subtract(new Vec3(), targetNode.position, this.role.position));
+                let linearVeloc = Vec3.multiplyScalar(new Vec3(), dir, PeopleRpgMoveSpeed);
+                this.rigbody.setLinearVelocity(new Vec3(linearVeloc.x, 0, linearVeloc.z));
+            } else {
+                this.rigbody.setLinearVelocity(new Vec3(temp * PeopleRpgMoveSpeed, 0, 0));
+            }
         }, 500, this);
     }
 
     currentTrigger: Collider = null;
     onTriggerStay(event: ITriggerEvent) {
-        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1") {
+        if (this.currentTrigger || event.otherCollider.getGroup() == event.selfCollider.getGroup() || (event.otherCollider.isTrigger && event.otherCollider.type != physics.EColliderType.BOX) || event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             return;
         }
         this.currentTrigger = event.otherCollider;
@@ -93,9 +113,9 @@ export class PeopleRpg {
     }
 
     onBoom(event: ICollisionEvent) {
-        if (event.otherCollider.node.name == "boom_1") {
+        if (event.otherCollider.node.name == "boom_1" || event.otherCollider.node.name == "boom_3") {
             console.log("被炸到了");
-            this.hit(this.atk);
+            this.die();
         }
     }
 
@@ -103,7 +123,6 @@ export class PeopleRpg {
     atkCall;
     doAtk(target: Node) {
         this.atkCall = setInterval(() => {
-            console.log("currentTrigger-------------------", this.currentTrigger.node);
             if (!target.isValid || this.isDie) {
                 this.currentTrigger = null;
                 this.rigbody.linearDamping = 0;
@@ -114,9 +133,9 @@ export class PeopleRpg {
                 this.anim.stop();
             })
             this.anim.play("rpg_atk");
-            if (target.isValid) {
+            if (target.isValid && !this.isDie) {
                 let pos = this.role.position;
-                let effectPos = new Vec3(target.position.x, 0, target.position.z);
+                let effectPos = new Vec3(target.position);
                 BulletPool.getInstance().shotBullet_1(pos, target.position, this.role.parent, () => {
                     EffectManager.playEfect(EffectType.BOOM_1, effectPos);
                     if (!target.isValid || this.isDie) {
@@ -146,6 +165,7 @@ export class PeopleRpg {
 
     die() {
         console.log("死亡:", this.role.name);
+        GameData.getInstance().removeRoleFromTeam(this, this.team);
         this.isDie = true;
         this.currentTrigger = null;
         if (this.role.isValid) {

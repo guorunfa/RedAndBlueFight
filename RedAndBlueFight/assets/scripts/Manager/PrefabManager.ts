@@ -22,6 +22,7 @@ export class PrefabManager {
     public static prefab_effect_boom_1: Prefab;
     public static prefab_effect_boom_2: Prefab;
     public static prefab_effect_boom_3: Prefab;
+    public static prefab_effect_boom_plane: Prefab;
     public static prefab_effect_fire: Prefab;
     public static prefab_effect_fire_blue: Prefab;
     public static prefab_effect_fire_red: Prefab;
@@ -50,6 +51,9 @@ export class PrefabManager {
             })
             this.prefab_effect_fire_red = assets.find((prefab) => {
                 return prefab.name == "fire_red";
+            })
+            this.prefab_effect_boom_plane = assets.find((prefab) => {
+                return prefab.name == "boom_plane";
             })
 
             resources.loadDir("prefabs/roles", Prefab, (err, assets: Prefab[]) => {
