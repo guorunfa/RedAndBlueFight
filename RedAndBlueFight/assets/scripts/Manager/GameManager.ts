@@ -132,84 +132,104 @@ export class GameManager extends Component {
         let enemyBase = team == TEAM.RED ? this.gameData.blueTeam.base : this.gameData.redTeam.base;
         let teamData = team == TEAM.RED ? this.gameData.redTeam : this.gameData.blueTeam;
         let tips: any;
+        let scale: Vec3 = v3(1, 1, 1);
         switch (call) {
             case "1"://召唤一组枪兵-red*5
-                for (let i = 0; i < 5; i++) {
-                    let temp = Tools.getRandomNum(5, 10);
-                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
-                    let gun = new PeopleGun(team, parent, gunBornPos, enemyBase);
-                    teamData.roles.push(gun);
-
-                }
                 tips = {
                     name: name,
                     msg: "一组冲锋枪兵",
                     combo: ++user.gunCombo
                 }
+                let distance: number = 6;
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                for (let i = 0; i < 5; i++) {
+                    let temp = Tools.getRandomNum(5, 10);
+                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + distance + i * temp);
+                    let gun = new PeopleGun(team, parent, gunBornPos, enemyBase, scale);
+                    teamData.roles.push(gun);
+
+                }
                 this.uiManager.showTips(team, tips);
                 break;
             case "2"://召唤一组rpg兵-red*3
-                for (let i = 0; i < 3; i++) {
-                    let rpgBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
-                    let rpg = new PeopleRpg(team, parent, rpgBornPos, enemyBase);
-                    teamData.roles.push(rpg);
-                }
                 tips = {
                     name: name,
                     msg: "一组rpg兵",
                     combo: ++user.rpgCombo
                 }
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                for (let i = 0; i < 3; i++) {
+                    let rpgBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * 10);
+                    let rpg = new PeopleRpg(team, parent, rpgBornPos, enemyBase, scale);
+                    teamData.roles.push(rpg);
+                }
+
                 this.uiManager.showTips(team, tips);
                 break;
             case "3"://召唤一组飞行兵-red*3
-                for (let i = 0; i < 3; i++) {
-                    let flyBornPos = new Vec3(bornPos.x, 20, bornPos.z + -6 + i * 10);
-                    let fly = new PeopleFly(team, parent, flyBornPos, enemyBase);
-                    teamData.roles.push(fly);
-                }
                 tips = {
                     name: name,
                     msg: "一组飞行兵",
                     combo: ++user.flyCombo
                 }
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                for (let i = 0; i < 3; i++) {
+                    let flyBornPos = new Vec3(bornPos.x, 20, bornPos.z + -6 + i * 10);
+                    let fly = new PeopleFly(team, parent, flyBornPos, enemyBase, scale);
+                    teamData.roles.push(fly);
+                }
+
                 this.uiManager.showTips(team, tips);
                 break;
             case "4"://召唤一组护盾兵-red*5
                 // break;
-                for (let i = 0; i < 5; i++) {
-                    let temp = Tools.getRandomNum(5, 10);
-                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
-                    let shield = new PeopleShield(team, parent, gunBornPos, enemyBase);
-                    teamData.roles.push(shield);
-                }
                 tips = {
                     name: name,
                     msg: "一组护盾兵",
                     combo: ++user.shieldCombo
                 }
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                for (let i = 0; i < 5; i++) {
+                    let temp = Tools.getRandomNum(5, 10);
+                    let gunBornPos = new Vec3(bornPos.x, bornPos.y, bornPos.z + -6 + i * temp);
+                    let shield = new PeopleShield(team, parent, gunBornPos, enemyBase, scale);
+                    teamData.roles.push(shield);
+                }
                 this.uiManager.showTips(team, tips);
                 break;
             case "5"://召唤一辆坦克-red*
-                let tank = new Tank(team, parent, bornPos, enemyBase);
-                teamData.roles.push(tank);
-
                 tips = {
                     name: name,
                     msg: "一辆坦克",
                     combo: ++user.tankCombo
                 }
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                let tank = new Tank(team, parent, bornPos, enemyBase, scale);
+                teamData.roles.push(tank);
                 this.uiManager.showTips(team, tips);
                 break;
             case "6"://召唤一架直升飞机-red*1
-                let planePos = v3(bornPos.x, 30, bornPos.z);
-                let airplane = new Airplane(team, parent, planePos, enemyBase);
-                teamData.roles.push(airplane);
-
                 tips = {
                     name: name,
                     msg: "一架飞机",
                     combo: ++user.airplaneCombo
                 }
+                if (tips.combo != 0 && tips.combo % 5 == 0) {
+                    scale = v3(1.5, 1.5, 1.5);
+                }
+                let planePos = v3(bornPos.x, 30, bornPos.z);
+                let airplane = new Airplane(team, parent, planePos, enemyBase, scale);
+                teamData.roles.push(airplane);
                 this.uiManager.showTips(team, tips);
                 break;
             case "7"://召唤战场轰炸-red*1

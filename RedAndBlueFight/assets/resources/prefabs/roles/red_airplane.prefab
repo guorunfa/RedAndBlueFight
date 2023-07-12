@@ -701,8 +701,8 @@
       "y": 4.5,
       "z": 0.3
     },
-    "_radius": 5.485,
-    "_cylinderHeight": 5.97,
+    "_radius": 10,
+    "_cylinderHeight": 10,
     "_direction": 1,
     "_id": ""
   },

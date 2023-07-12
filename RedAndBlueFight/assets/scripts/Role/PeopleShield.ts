@@ -30,9 +30,10 @@ export class PeopleShield {
     isAtking: boolean;
     isDie: boolean;
 
-    constructor(team: TEAM, parent: Node, bornPos: Vec3, enemyBase: Base) {
+    constructor(team: TEAM, parent: Node, bornPos: Vec3, enemyBase: Base, scale: Vec3) {
         let prefab = team == TEAM.RED ? PrefabManager.prefab_red_people_shield : PrefabManager.prefab_blue_people_shield;
         let people = instantiate(prefab);
+        people.setScale(scale);
         people.parent = parent;
         people.position = bornPos;
 
